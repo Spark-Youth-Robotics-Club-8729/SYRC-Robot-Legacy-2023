@@ -10,7 +10,7 @@
 void Robot::RobotInit()
 {
     // camera settings
-    //hello
+    // this is for testing purposes
     m_camera = frc::CameraServer::GetInstance()->StartAutomaticCapture(0);
     m_camera.SetResolution(CAMERA_RES_W, CAMERA_RES_H);
     m_camera.SetFPS(CAMERA_FPS);
