@@ -33,29 +33,33 @@ public:
 private:
 
   //CAN Pin Constants
-  static const int leftLeadDeviceID = 1;
-  static const int leftFollowDeviceID = 2;
-  static const int rightLeadDeviceID = 3;
+  static const int leftLeadDeviceID = 2;
+  static const int leftFollowDeviceID = 3;
+  static const int rightLeadDeviceID = 1;
   static const int rightFollowDeviceID = 4;
 
   //Encoder Pin Constants
-  static const int EncoderPinA = 0;
-  static const int EncoderPinB = 1;
+  static const int EncoderPin1A = 0;
+  static const int EncoderPin1B = 1;
+  static const int EncoderPin2A = 2;
+  static const int EncoderPin2B = 3;
 
   bool arrivedDestination = false;
 
   //Joystick
-  frc::Joystick m_stick{0};
+  frc::Joystick m_xbox{ 0 };
 
   //Drive
-  rev::CANSparkMax m_leftLeadMotor{leftLeadDeviceID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_rightLeadMotor{rightLeadDeviceID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_leftFollowMotor{leftFollowDeviceID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_rightFollowMotor{rightFollowDeviceID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_leftLeadMotor{leftLeadDeviceID, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_rightLeadMotor{rightLeadDeviceID, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_leftFollowMotor{leftFollowDeviceID, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_rightFollowMotor{rightFollowDeviceID, rev::CANSparkMax::MotorType::kBrushed};
   frc::DifferentialDrive m_robotDrive{m_leftLeadMotor, m_rightLeadMotor};
 
   //Encoder Set Up
-  frc::Encoder m_encoder{EncoderPinA, EncoderPinB};
+  frc::Encoder m_encoder1{ EncoderPin1A, EncoderPin1B, true };
+  frc::Encoder m_encoder2{ EncoderPin2A, EncoderPin2B, false };
+
  
   //Default
   frc::SendableChooser<std::string> m_chooser;

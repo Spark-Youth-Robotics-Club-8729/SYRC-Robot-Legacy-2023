@@ -26,36 +26,34 @@ void Robot::RobotInit() {
   frc::SmartDashboard::PutData("Auto Modes", &m_chooser);
 
   //Encoders
-  m_encoder.Reset();
-  m_encoder.SetDistancePerPulse((3.14159265358 * 6) / 360.0);
+  m_encoder1.Reset();
+  m_encoder2.Reset();
+
+  m_encoder1.SetDistancePerPulse((3.14159265358 * 6) / 360.0);
+  m_encoder2.SetDistancePerPulse((3.14159265358 * 6) / 360.0);
 
 }
 
 void Robot::RobotPeriodic() {}
 
-void Robot::AutonomousInit() {
-  m_autoSelected = m_chooser.GetSelected();
-  // m_autoSelected = SmartDashboard::GetString("Auto Selector",
-  //     kAutoNameDefault);
-  fmt::print("Auto selected: {}\n", m_autoSelected);
-  if (m_autoSelected == kAutoNameCustom) {
-    // Custom Auto goes here
-  } else {
-    // Default Auto goes here
-  }
+void Robot::AutonomousInit() 
+{
 
-m_encoder.Reset();
+m_encoder1.Reset();
+m_encoder2.Reset();
+
+
 }
+
 void Robot::AutonomousPeriodic() 
 {
   
-  if (m_encoder.GetDistance() < 10 && arrivedDestination == false) {
-    m_robotDrive.ArcadeDrive(0, 0.4);
+  if (m_encoder1.GetDistance() < 10 && arrivedDestination == false) {
+    m_robotDrive.ArcadeDrive(0, 0.5);
     } else {
-        //m_robotDrive.ArcadeDrive(0, 0);
         arrivedDestination = true;
-        if(m_encoder.GetDistance() > 0) {
-            m_robotDrive.ArcadeDrive(0, -0.4);
+        if(m_encoder1.GetDistance() > 0) {
+            m_robotDrive.ArcadeDrive(0, -0.5);
         }
         else {
             m_robotDrive.ArcadeDrive(0, 0);
@@ -64,19 +62,23 @@ void Robot::AutonomousPeriodic()
 }
 
 void Robot::TeleopInit() {
+m_encoder1.Reset();
+m_encoder2.Reset();
 
-m_encoder.Reset();
 
 }
 
 void Robot::TeleopPeriodic() {
 
   // Drive with arcade style
-  m_robotDrive.ArcadeDrive(-m_stick.GetY(), m_stick.GetX());
+  float xDrive = m_xbox.GetY() * 0.8;
+  float yDrive = m_xbox.GetX() * 0.8;
+  m_robotDrive.ArcadeDrive(yDrive, xDrive);
 
   // Encoder SmartDashboard
-  frc::SmartDashboard::PutNumber("Encoder Distance: ", m_encoder.GetDistance());
-  frc::sim::EncoderSim m_EncoderSim{m_encoder};
+  frc::SmartDashboard::PutNumber("Encoder 1 Distance: ", m_encoder1.GetDistance());
+  frc::SmartDashboard::PutNumber("Encoder 2 Distance: ", m_encoder2.GetDistance());
+  frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
   
 }
 
