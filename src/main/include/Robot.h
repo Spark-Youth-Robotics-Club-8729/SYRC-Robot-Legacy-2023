@@ -82,8 +82,8 @@ private:
   // Ultrasonic Set Up
   frc::AnalogInput ultrasonic_sensor_one{0};
   frc::DigitalOutput ultrasonic_trigger_pin_one{0};
-  double ultrasonic_sensor_range_one = 0;
-  double voltage_scale_factor = 1;
+  double ultrasonic_sensor_range_one = 0.0;
+  double voltage_scale_factor = 1.0;
 
   //Default
   frc::SendableChooser<std::string> m_chooser;
