@@ -22,6 +22,7 @@
 #include <frc/util/color.h>
 #include <frc/AnalogGyro.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
+#include "cameraserver/CameraServer.h"
 
 
 
@@ -97,6 +98,11 @@ private:
   frc::AnalogInput ultrasonic_sensor_one{0};
   frc::DigitalOutput ultrasonic_trigger_pin_one{4};
   double ultrasonic_sensor_range_one = 0.0;
+  
+  frc::AnalogInput ultrasonic_sensor_two{0};
+  frc::DigitalOutput ultrasonic_trigger_pin_two{4};
+  double ultrasonic_sensor_range_two = 0.0;
+
   double voltage_scale_factor = 1.0;
 
   // Autonomous Set Up
