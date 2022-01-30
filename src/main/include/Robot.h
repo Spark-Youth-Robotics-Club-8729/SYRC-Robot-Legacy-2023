@@ -72,10 +72,10 @@ private:
   // frc::AnalogGyro m_gyro{0};
 
   // RGB Values
-  static constexpr frc::Color kBlueCargo = frc::Color(0, 0, 0);
-  static constexpr frc::Color kRedCargo = frc::Color(0, 0, 0);
-  static constexpr frc::Color kBlueTarmac = frc::Color(0, 0, 0);
-  static constexpr frc::Color kBlackLine = frc::Color(0, 0, 0); //We'll need to detect these on Sunday
+  // static constexpr frc::Color kBlueCargo = frc::Color(0, 0, 0);
+  // static constexpr frc::Color kRedCargo = frc::Color(0, 0, 0);
+  // static constexpr frc::Color kBlueTarmac = frc::Color(0, 0, 0);
+  // static constexpr frc::Color kBlackLine = frc::Color(0, 0, 0); //We'll need to detect these on Sunday
 
   // bool arrivedDestination = false;
 
@@ -99,9 +99,9 @@ private:
   frc::DigitalOutput ultrasonic_trigger_pin_one{4};
   double ultrasonic_sensor_range_one = 0.0;
   
-  frc::AnalogInput ultrasonic_sensor_two{0};
-  frc::DigitalOutput ultrasonic_trigger_pin_two{4};
-  double ultrasonic_sensor_range_two = 0.0;
+  // frc::AnalogInput ultrasonic_sensor_two{0};
+  // frc::DigitalOutput ultrasonic_trigger_pin_two{4};
+  // double ultrasonic_sensor_range_two = 0.0;
 
   double voltage_scale_factor = 1.0;
 
