@@ -23,6 +23,8 @@
 #include <frc/AnalogGyro.h>
 #include <frc/kinematics/DifferentialDriveOdometry.h>
 #include "cameraserver/CameraServer.h"
+#include "frc/motorcontrol/PWMVictorSPX.h"
+#include <frc/SpeedControllerGroup.h>
 
 
 
@@ -49,6 +51,11 @@ private:
   static const int leftFollowDeviceID = 3;
   static const int rightLeadDeviceID = 1;
   static const int rightFollowDeviceID = 4;
+  static const int Shooter1RioPin = 1;
+  static const int Shooter2RioPin = 2;
+  static const int IntakeMotorRioPin = 3;
+
+
 
   //Encoder Pin Constants
   static const int EncoderPin1A = 0;
@@ -88,6 +95,12 @@ private:
   rev::CANSparkMax m_leftFollowMotor{leftFollowDeviceID, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_rightFollowMotor{rightFollowDeviceID, rev::CANSparkMax::MotorType::kBrushed};
   frc::DifferentialDrive m_robotDrive{m_leftLeadMotor, m_rightLeadMotor};
+
+  //Intake
+  frc::PWMVictorSPX m_Shooter1Motor {Shooter1RioPin};
+  frc::PWMVictorSPX m_Shooter2Motor {Shooter2RioPin};
+  frc::PWMVictorSPX m_IntakeMotor {IntakeMotorRioPin};
+  frc::SpeedControllerGroup m_Shooter {m_Shooter1Motor, m_Shooter2Motor};
 
   //Encoder Set Up
   frc::Encoder m_encoder1{ EncoderPin1A, EncoderPin1B, true };

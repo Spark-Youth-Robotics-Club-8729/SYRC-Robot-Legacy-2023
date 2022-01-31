@@ -283,6 +283,9 @@ void Robot::TeleopPeriodic() {
   float xDrive = m_xbox.GetX() * -0.8;
   float yDrive = m_xbox.GetY() * 0.8;
   m_robotDrive.ArcadeDrive(xDrive, yDrive);
+  // m_IntakeMotor.Set(m_xbox.GetRawAxis(3));
+  m_Shooter.Set(m_xbox.GetRawAxis(3));
+
 
   // frc::DifferentialDriveOdometry m_odometry{m_gyro.GetRotation2d()};
   // m_odometry.Update(m_gyro.GetRotation2d(),
