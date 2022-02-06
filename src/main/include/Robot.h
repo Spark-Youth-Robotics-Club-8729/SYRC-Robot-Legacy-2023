@@ -29,6 +29,7 @@
 
 
 
+
 class Robot : public frc::TimedRobot {
 
 public:
@@ -72,11 +73,10 @@ private:
   // Colour Sensor
   rev::ColorSensorV3 m_colorSensor{i2cPort};
   rev::ColorMatch m_colorMatcher;
-  float currentBlue;
-  float pastBlue;
+  float currentRed;
+  float pastRed;
 
-  //Gryo
-  // frc::AnalogGyro m_gyro{0};
+  
 
   // RGB Values
   // static constexpr frc::Color kBlueCargo = frc::Color(0, 0, 0);
@@ -96,7 +96,7 @@ private:
   rev::CANSparkMax m_rightFollowMotor{rightFollowDeviceID, rev::CANSparkMax::MotorType::kBrushed};
   frc::DifferentialDrive m_robotDrive{m_leftLeadMotor, m_rightLeadMotor};
 
-  //Intake
+  //Intake/Shooter
   frc::PWMVictorSPX m_Shooter1Motor {Shooter1RioPin};
   frc::PWMVictorSPX m_Shooter2Motor {Shooter2RioPin};
   frc::PWMVictorSPX m_IntakeMotor {IntakeMotorRioPin};
@@ -127,6 +127,8 @@ private:
   bool distance;
   bool reset;
   bool closetoCargo;
+  int increment;
+  bool SenseColour;
   // bool once;
 
   //Default
