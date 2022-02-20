@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "AHRS.h"
 #include <string>
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
@@ -25,10 +26,14 @@
 #include "cameraserver/CameraServer.h"
 #include "frc/motorcontrol/PWMVictorSPX.h"
 #include <frc/SpeedControllerGroup.h>
+#include "ctre/Phoenix.h"
 
 class Robot : public frc::TimedRobot {
 
 public:
+  
+  //Gyroscope
+  AHRS m_gyro{frc::SPI::Port::kMXP};
 
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -70,7 +75,7 @@ private:
   rev::ColorSensorV3 m_colorSensor{i2cPort};
   rev::ColorMatch m_colorMatcher;
   float currentRed;
-  float pastRed;
+  float currentBlue;
 
   
 
@@ -87,17 +92,20 @@ private:
 
   //Drive
   rev::CANSparkMax m_leftLeadMotor{leftLeadDeviceID, rev::CANSparkMax::MotorType::kBrushed};
+  //frc::CANVictorSPX m_leftLeadMotor{leftLeadDeviceID, rev::CANSparkMax::MotorType::kBrushed};
+
   rev::CANSparkMax m_rightLeadMotor{rightLeadDeviceID, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_leftFollowMotor{leftFollowDeviceID, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_rightFollowMotor{rightFollowDeviceID, rev::CANSparkMax::MotorType::kBrushed};
   frc::DifferentialDrive m_robotDrive{m_leftLeadMotor, m_rightLeadMotor};
+
+//minecraft
 
   //Intake/Shooter
   frc::PWMVictorSPX m_Shooter1Motor {Shooter1RioPin};
   frc::PWMVictorSPX m_Shooter2Motor {Shooter2RioPin};
   frc::PWMVictorSPX m_IntakeMotor {IntakeMotorRioPin};
   frc::SpeedControllerGroup m_Shooter {m_Shooter1Motor, m_Shooter2Motor};
-
   //Encoder Set Up
   frc::Encoder m_encoder1{ EncoderPin1A, EncoderPin1B, true };
   frc::Encoder m_encoder2{ EncoderPin2A, EncoderPin2B, false };
@@ -118,6 +126,7 @@ private:
   int counter;
   int phase;
   int phase4;
+  int phase3;
   int cargo_Outtake_Time;
   int cargo_Intake_Time;
   bool distance;
