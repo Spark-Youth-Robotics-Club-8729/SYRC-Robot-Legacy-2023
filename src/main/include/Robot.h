@@ -28,12 +28,13 @@
 #include <frc/SpeedControllerGroup.h>
 #include "ctre/Phoenix.h"
 
+
+
+
+
 class Robot : public frc::TimedRobot {
 
 public:
-  
-  //Gyroscope
-  AHRS m_gyro{frc::SPI::Port::kMXP};
 
   void RobotInit() override;
   void RobotPeriodic() override;
@@ -45,6 +46,15 @@ public:
   void DisabledPeriodic() override;
   void TestInit() override;
   void TestPeriodic() override;
+  void IntakeMovement();
+  void IntakeOnAndOff();
+  void Storage();
+  void Outake();
+  void Movement();
+  void Hanging1();
+  void Hanging2();
+  void Hanging3();
+  void SmartDashboard();
 
 private:
 
@@ -53,9 +63,13 @@ private:
   static const int leftFollowDeviceID = 3;
   static const int rightLeadDeviceID = 1;
   static const int rightFollowDeviceID = 4;
-  static const int Shooter1RioPin = 1;
-  static const int Shooter2RioPin = 2;
-  static const int IntakeMotorRioPin = 3;
+  static const int shooter1ID = 5;
+  static const int shooter2ID = 6;
+  static const int storageID = 7;
+
+  // static const int Shooter1RioPin = 1;
+  // static const int Shooter2RioPin = 2;
+  // static const int IntakeMotorRioPin = 3;
 
 
 
@@ -65,9 +79,6 @@ private:
   static const int EncoderPin2A = 2;
   static const int EncoderPin2B = 3;
 
-  // Field2d
-  // frc::Field2d m_field;
-
   // I2C Port
   static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
 
@@ -76,8 +87,9 @@ private:
   rev::ColorMatch m_colorMatcher;
   float currentRed;
   float currentBlue;
-
   
+  //Gyro
+  AHRS m_gyro{frc::SPI::Port::kMXP};
 
   // RGB Values
   // static constexpr frc::Color kBlueCargo = frc::Color(0, 0, 0);
@@ -92,20 +104,17 @@ private:
 
   //Drive
   rev::CANSparkMax m_leftLeadMotor{leftLeadDeviceID, rev::CANSparkMax::MotorType::kBrushed};
-  //frc::CANVictorSPX m_leftLeadMotor{leftLeadDeviceID, rev::CANSparkMax::MotorType::kBrushed};
-
   rev::CANSparkMax m_rightLeadMotor{rightLeadDeviceID, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_leftFollowMotor{leftFollowDeviceID, rev::CANSparkMax::MotorType::kBrushed};
   rev::CANSparkMax m_rightFollowMotor{rightFollowDeviceID, rev::CANSparkMax::MotorType::kBrushed};
+  rev::CANSparkMax m_shooter1{shooter1ID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_shooter2{shooter1ID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_storage{storageID, rev::CANSparkMax::MotorType::kBrushless};
+
   frc::DifferentialDrive m_robotDrive{m_leftLeadMotor, m_rightLeadMotor};
 
-//minecraft
-
   //Intake/Shooter
-  frc::PWMVictorSPX m_Shooter1Motor {Shooter1RioPin};
-  frc::PWMVictorSPX m_Shooter2Motor {Shooter2RioPin};
-  frc::PWMVictorSPX m_IntakeMotor {IntakeMotorRioPin};
-  frc::SpeedControllerGroup m_Shooter {m_Shooter1Motor, m_Shooter2Motor};
+
   //Encoder Set Up
   frc::Encoder m_encoder1{ EncoderPin1A, EncoderPin1B, true };
   frc::Encoder m_encoder2{ EncoderPin2A, EncoderPin2B, false };
@@ -114,11 +123,7 @@ private:
   // Ultrasonic Set Up
   frc::AnalogInput ultrasonic_sensor_one{0};
   frc::DigitalOutput ultrasonic_trigger_pin_one{4};
-  double ultrasonic_sensor_range_one = 0.0;
-  
-  // frc::AnalogInput ultrasonic_sensor_two{0};
-  // frc::DigitalOutput ultrasonic_trigger_pin_two{4};
-  // double ultrasonic_sensor_range_two = 0.0;
+  double ultrasonic_sensor_range_one = 0.0; 
 
   double voltage_scale_factor = 1.0;
 
@@ -131,7 +136,7 @@ private:
   int cargo_Intake_Time;
   bool distance;
   bool reset;
-  bool closetoCargo;  
+  bool closetoCargo;
   int increment;
   bool SenseColour;
   // bool once;
