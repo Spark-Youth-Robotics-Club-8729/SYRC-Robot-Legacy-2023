@@ -47,7 +47,7 @@ public:
   void IntakeMovement();
   void IntakeOnAndOff();
   void Storage();
-  void Outake();
+  void Outtake();
   void Movement();
   void Hanging1();
   void Hanging2();
@@ -59,9 +59,9 @@ private:
   //CAN Pin Constants
   static const int leftLeadDeviceID = 0;
   static const int rightLeadDeviceID = 1;
-  static const int shooter1ID = 5;
-  static const int shooter2ID = 6;
-  static const int storageID = 7;
+  static const int shooter1ID = 1;
+  static const int shooter2ID = 2;
+  static const int storageID = 3;
 
 
   //Encoder Pin Constants
@@ -92,7 +92,7 @@ private:
 
   //Intake/Shooter
   rev::CANSparkMax m_shooter1{shooter1ID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_shooter2{shooter1ID, rev::CANSparkMax::MotorType::kBrushless};
+  rev::CANSparkMax m_shooter2{shooter2ID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_storage{storageID, rev::CANSparkMax::MotorType::kBrushless};
 
   //Encoder Set Up

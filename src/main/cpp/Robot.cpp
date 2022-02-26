@@ -460,7 +460,7 @@ void Robot::TeleopPeriodic() {
   // IntakeMovement();
   // IntakeOnAndOff();
   Storage();
-  Outake();
+  Outtake();
   Movement();
   // Hanging1();
   // Hanging2();
@@ -507,9 +507,21 @@ void Robot::Storage() {
 
 }
 
-void Robot::Outake() {
+void Robot::Outtake() {
 
-  m_shooter1.Set(m_xbox.GetRawAxis(1));
+  m_shooter1.Set(m_xbox.GetRawAxis(1) * 0.10);
+
+  if (m_xbox.GetRawButton(1)) { //Not sure if "Set" ramps up motor, set to 0.1 or 0.2 to test, must be 0.7
+
+    m_shooter1.Set(0.10);
+    
+    if (m_xbox.GetRawButton(1)) {
+      
+      m_shooter1.Set(0.0);
+
+    }
+
+  }
 
 }
 
