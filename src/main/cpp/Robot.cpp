@@ -10,14 +10,8 @@
 void Robot::RobotInit() {
 
   //Reset Shooter and Storage motors
-  m_shooter1.RestoreFactoryDefaults();
-  m_shooter2.RestoreFactoryDefaults();
+  m_shooter.RestoreFactoryDefaults();
   m_storage.RestoreFactoryDefaults();
-
-
-  //Allowing back motors to follow front motors/Shooter Gearbox
-  m_shooter2.Follow(m_shooter1);
-
 
   //Camera
   cs::UsbCamera camera = frc::CameraServer::StartAutomaticCapture();
@@ -111,6 +105,7 @@ if (phase == 0) {
     phase = 1;
 
   }
+
 }
 
 // Phase 1: Outtake ball
@@ -170,6 +165,7 @@ if (phase == 2 && reset==true) { //Exiting Tarmac
     phase = 4;
 
   }
+  
 } 
 
 if (phase == 3) {
@@ -247,7 +243,8 @@ else if(phase3==2) { //Turn 60 degrees
     m_robotDrive.ArcadeDrive(-0.6,0);
 
   } 
-  else{
+
+  else {
 
     phase3++;
     m_encoder1.Reset();
@@ -509,19 +506,19 @@ void Robot::Storage() {
 
 void Robot::Outtake() {
 
-  m_shooter1.Set(m_xbox.GetRawAxis(1) * 0.10);
+  m_shooter.Set(m_xbox.GetRawAxis(1));
 
-  if (m_xbox.GetRawButton(1)) { //Not sure if "Set" ramps up motor, set to 0.1 or 0.2 to test, must be 0.7
+  // if (m_xbox.GetRawButton(1)) { //Not sure if "Set" ramps up motor, set to 0.1 or 0.2 to test, must be 0.7
 
-    m_shooter1.Set(0.10);
+  //   m_shooter.Set(0.10);
     
-    if (m_xbox.GetRawButton(1)) {
+  //   if (m_xbox.GetRawButton(1)) {
       
-      m_shooter1.Set(0.0);
+  //     m_shooter.Set(0.0);
 
-    }
+  //   }
 
-  }
+  // }
 
 }
 

@@ -44,24 +44,14 @@ public:
   void DisabledPeriodic() override;
   void TestInit() override;
   void TestPeriodic() override;
-  void IntakeMovement();
-  void IntakeOnAndOff();
-  void Storage();
-  void Outtake();
-  void Movement();
-  void Hanging1();
-  void Hanging2();
-  void Hanging3();
-  void SmartDashboard();
 
 private:
 
   //CAN Pin Constants
   static const int leftLeadDeviceID = 0;
   static const int rightLeadDeviceID = 1;
-  static const int shooter1ID = 1;
-  static const int shooter2ID = 2;
-  static const int storageID = 3;
+  static const int shooterID = 1;
+  static const int storageID = 2;
 
 
   //Encoder Pin Constants
@@ -83,16 +73,15 @@ private:
   AHRS m_gyro{frc::SPI::Port::kMXP};
 
   //Joystick
-  frc::Joystick m_xbox{ 0 };
+  frc::Joystick m_xbox{ 0 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 0.
 
   //DifferentialDrive
   WPI_VictorSPX frontLeft = {leftLeadDeviceID};
   WPI_VictorSPX frontRight = {rightLeadDeviceID};
   frc::DifferentialDrive m_robotDrive{frontLeft, frontRight};
 
-  //Intake/Shooter
-  rev::CANSparkMax m_shooter1{shooter1ID, rev::CANSparkMax::MotorType::kBrushless};
-  rev::CANSparkMax m_shooter2{shooter2ID, rev::CANSparkMax::MotorType::kBrushless};
+  //Storage/Shooter
+  rev::CANSparkMax m_shooter{shooterID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_storage{storageID, rev::CANSparkMax::MotorType::kBrushless};
 
   //Encoder Set Up
@@ -103,7 +92,7 @@ private:
   // Ultrasonic Set Up
   frc::AnalogInput ultrasonic_sensor_one{0};
   frc::DigitalOutput ultrasonic_trigger_pin_one{4};
-  double ultrasonic_sensor_range_one = 0.0; 
+  double ultrasonic_sensor_range_one = 0.0;
   double voltage_scale_factor = 1.0;
 
   // Autonomous Variables
@@ -113,6 +102,17 @@ private:
   int cargo_Outtake_Time;
   int cargo_Intake_Time;
   bool reset;
+
+  //Teleop Periodic
+  void IntakeMovement();
+  void IntakeOnAndOff();
+  void Storage();
+  void Outtake();
+  void Movement();
+  // void Hanging1();
+  // void Hanging2();
+  // void Hanging3();
+  void SmartDashboard();
 
   //Default
   frc::SendableChooser<std::string> m_chooser;
