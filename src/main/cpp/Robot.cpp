@@ -454,8 +454,7 @@ void Robot::TeleopInit() {
 
 void Robot::TeleopPeriodic() {
 
-  // IntakeMovement();
-  // IntakeOnAndOff();
+  Intake();
   Storage();
   Outtake();
   Movement();
@@ -463,6 +462,22 @@ void Robot::TeleopPeriodic() {
   // Hanging2();
   // Hanging3();
   SmartDashboard();
+
+}
+
+void Robot::Intake() {
+
+  if (m_xbox.GetRawButton(1)) {
+
+    intake.Set(0.85);
+
+  }
+
+  if (m_xbox.GetRawButton(2)) {
+
+    intake.Set(0.0);
+
+  }
 
 }
 
@@ -500,13 +515,13 @@ void Robot::SmartDashboard() {
 
 void Robot::Storage() {
 
-  m_storage.Set(m_xbox.GetRawAxis(3));
+  m_storage.Set(m_xbox.GetRawAxis(1));
 
 }
 
 void Robot::Outtake() {
 
-  m_shooter.Set(m_xbox.GetRawAxis(1));
+  m_shooter.Set(m_xbox.GetRawAxis(3)*0.8);
 
   // if (m_xbox.GetRawButton(1)) { //Not sure if "Set" ramps up motor, set to 0.1 or 0.2 to test, must be 0.7
 

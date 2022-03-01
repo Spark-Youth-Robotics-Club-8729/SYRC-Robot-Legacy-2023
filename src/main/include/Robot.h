@@ -14,7 +14,6 @@
 #include "rev/CANSparkMax.h"
 #include <frc/smartdashboard/SmartDashboard.h>
 #include <frc/Encoder.h>
-#include <frc/simulation/EncoderSim.h>
 #include <frc/AnalogInput.h>
 #include <frc/DigitalOutput.h>
 #include "frc/RobotController.h"
@@ -22,10 +21,8 @@
 #include "rev/ColorMatch.h"
 #include <frc/util/color.h>
 #include <frc/AnalogGyro.h>
-#include <frc/kinematics/DifferentialDriveOdometry.h>
 #include "cameraserver/CameraServer.h"
 #include "frc/motorcontrol/PWMVictorSPX.h"
-#include <frc/SpeedControllerGroup.h>
 #include "ctre/Phoenix.h"
 
 
@@ -48,10 +45,12 @@ public:
 private:
 
   //CAN Pin Constants
-  static const int leftLeadDeviceID = 0;
-  static const int rightLeadDeviceID = 1;
-  static const int shooterID = 1;
-  static const int storageID = 2;
+  static const int leftLeadDeviceID = 3;
+  static const int rightLeadDeviceID = 4;
+  static const int intakeDeviceID = 5;
+
+  static const int storageID = 1;
+  static const int shooterID = 2;
 
 
   //Encoder Pin Constants
@@ -78,6 +77,7 @@ private:
   //DifferentialDrive
   WPI_VictorSPX frontLeft = {leftLeadDeviceID};
   WPI_VictorSPX frontRight = {rightLeadDeviceID};
+  WPI_VictorSPX intake = {intakeDeviceID};
   frc::DifferentialDrive m_robotDrive{frontLeft, frontRight};
 
   //Storage/Shooter
@@ -104,8 +104,7 @@ private:
   bool reset;
 
   //Teleop Periodic
-  void IntakeMovement();
-  void IntakeOnAndOff();
+  void Intake();
   void Storage();
   void Outtake();
   void Movement();
