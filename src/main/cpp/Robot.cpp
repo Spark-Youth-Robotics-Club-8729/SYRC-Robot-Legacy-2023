@@ -75,7 +75,7 @@ currentBlue = detectedColor.blue;
 double voltage_scale_factor = 5/frc::RobotController::GetVoltage5V();
 double  ultrasonic_sensor_range_one = ultrasonic_sensor_one.GetValue() * 0.0492 * voltage_scale_factor;
 frc::SmartDashboard::PutNumber("Sensor 1 Range", ultrasonic_sensor_range_one);
-frc::SmartDashboard::PutNumber("NAV sensor", (m_gyro.GetAngle()));
+frc::SmartDashboard::PutNumber("NAV sensor", (m_gyro.GetYaw()));
 
 
 //Encoder Periodic
@@ -112,12 +112,14 @@ if (phase == 0) {
 
 if (phase == 1) {
 
-  if (cargo_Outtake_Time < 50) { // 50 multiplied by 20 millisecond period is approximately 1 second, Used to rev up the outtake
-    
+    if (cargo_Outtake_Time <= 200){
     // Outtake on here
-    cargo_Outtake_Time = cargo_Outtake_Time + 1; 
-
-  }
+    cargo_Outtake_Time+=1;
+    m_shooter.Set(0.9);
+      if (cargo_Outtake_Time >= 50){
+        m_storage.Set(0.9);
+      }
+    }
 
   else { //Outtake off, and onto the next phase
     
@@ -170,14 +172,14 @@ if (phase == 2 && reset==true) { //Exiting Tarmac
 
 if (phase == 3) {
   
-  if (m_encoder1.GetDistance() < 15) { //Real distance = 350/8 inches, Driving until we reach the cargo
+  if (m_encoder1.GetDistance() < 15) { //Real distance = 350/8 inches, Driving until we reach the cargo 
     
     m_robotDrive.ArcadeDrive(0, -0.50);
- 
+    //Intake comes here
+    if (m_encoder1.GetDistance() > 10 ) { 
+      intake.Set(0.9);
+    }
   }
-  
-  //Intake comes here
-
   else if (reset==false) { // Done picking up cargo
     
     phase = 0;
@@ -191,7 +193,7 @@ if (phase == 3) {
   else {
 
     phase = 4;
-
+    m_robotDrive.ArcadeDrive(0,0);
   }
 
 }
@@ -204,10 +206,13 @@ if (phase == 3) {
 
 if(phase3==0) { //Outtake ball
     
-  if (cargo_Outtake_Time < 150) { 
-        
-      cargo_Outtake_Time++;
-
+    if (cargo_Outtake_Time <= 200){
+    // Outtake on here
+    cargo_Outtake_Time+=1;
+    m_shooter.Set(0.9);
+      if (cargo_Outtake_Time >= 50){
+        m_storage.Set(0.9);
+      }
     }
     
   else {
@@ -238,7 +243,7 @@ else if(phase3==1) {//Go forwards until we sense blue
 
 else if(phase3==2) { //Turn 60 degrees
   
-  if(abs(m_gyro.GetAngle())<60){
+  if(abs(m_gyro.GetYaw())<60){
 
     m_robotDrive.ArcadeDrive(-0.6,0);
 
@@ -255,17 +260,15 @@ else if(phase3==2) { //Turn 60 degrees
 }
 
 else if (phase3==3) {//Go forwards 20 inches, and intake is on for last 10 inches 
-  
-  if(m_encoder1.GetDistance()<=10){
 
+  if(m_encoder1.GetDistance()<20){ 
     m_robotDrive.ArcadeDrive(0,-0.5);
 
+    if(m_encoder1.GetDistance()>=10){
+      intake.Set(0.9); //Intake on
+    
+    } 
   }
-  else if(m_encoder1.GetDistance()<20){
-
-    m_robotDrive.ArcadeDrive(0,-0.5);
-
-  } 
   else{
 
     phase3++;
@@ -296,7 +299,7 @@ else if(phase3==4){//Go backwards till sense blue
 
 else if (phase3==5) { // Turn X degrees
   
-  if(abs(m_gyro.GetAngle())<60){
+  if(m_gyro.GetYaw()<60){
 
     m_robotDrive.ArcadeDrive(0.6,0);
 
@@ -313,14 +316,14 @@ else if (phase3==5) { // Turn X degrees
 
 else if (phase3==6) { //Go backwards until you are 12 inches from wall, using ultrasonic, ultrasonic bit buggy socomment out
   
-  if(ultrasonic_sensor_range_one>15){
+  if(ultrasonic_sensor_range_one>12){
 
     m_robotDrive.ArcadeDrive(0,0.5);
 
   } 
   else{
 
-    phase3++;
+    phase3++; 
     m_encoder1.Reset();
     m_encoder2.Reset();
 
@@ -330,7 +333,7 @@ else if (phase3==6) { //Go backwards until you are 12 inches from wall, using ul
 
 else if (phase3==6) { //6 inches drive backwards to hub
   
-  if(m_encoder1.GetDistance()>-12){
+  if(m_encoder1.GetDistance()>-6){
 
     m_robotDrive.ArcadeDrive(0,0.5);
 
@@ -346,11 +349,14 @@ else if (phase3==6) { //6 inches drive backwards to hub
 }
 
 else if (phase3==7) { //Outtake ball
-  if (cargo_Outtake_Time < 150) { 
-
-    cargo_Outtake_Time++;
-
-  }
+    if (cargo_Outtake_Time <= 200){
+    // Outtake on here
+    cargo_Outtake_Time+=1;
+    m_shooter.Set(0.9);
+      if (cargo_Outtake_Time >= 50){
+        m_storage.Set(0.9);
+      }
+    }
   else {
 
     phase3++;
@@ -364,10 +370,22 @@ else if (phase3==7) { //Outtake ball
 
 
 // Route 4:
-
+if (phase4==-1){//Outtake ball
+    if (cargo_Outtake_Time <= 200){ 
+    
+    cargo_Outtake_Time+=1; 
+    m_shooter.Set(0.9);
+      if (cargo_Outtake_Time >= 50){
+        m_storage.Set(0.9); 
+      } 
+    }
+    else{
+      phase4=0;
+    }
+}
 if (phase4==0){ //Turn 180 degrees
 
-  if(m_gyro.GetAngle()>-180){
+  if(m_gyro.GetYaw()>-180){
 
     m_robotDrive.ArcadeDrive(0.6,0);
 
@@ -404,7 +422,7 @@ if (phase4==1) { //Go back until 40 inches away from wall
 
 if (phase4==2){ //Turn 90 degrees
   
-  if(abs(m_gyro.GetAngle())<90) {
+  if(m_gyro.GetYaw()<90) {
 
     m_robotDrive.ArcadeDrive(0.6,0);
 
@@ -424,24 +442,37 @@ if (phase4==3) { //Go fowards till terminal ball and push it to the human player
   
   if (m_encoder2.GetDistance()>=-20) {
 
-    m_robotDrive.ArcadeDrive(0,0.5);
-
-  } 
-  
-  else{
-
-    if (cargo_Intake_Time < 150) { 
-
-      cargo_Intake_Time++; 
-      m_robotDrive.ArcadeDrive(0, 0.5);
-      phase4=4;
-
+    m_robotDrive.ArcadeDrive(0,-0.5);
+    if(m_encoder2.GetDistance()>=-10){
+      intake.Set(0.9);
     }
-
+  } 
+  else{
+    phase4++;
   }
 
 }
+if (phase4==4){
+  if(m_encoder2.GetDistance()<0){
+    m_robotDrive.ArcadeDrive(0,-0,5);
+  } else{
+    phase4++;
+    m_encoder1.Reset();
+  }
+}
+if (phase4==5){
+    if(m_gyro.GetYaw()>-90) {
+      m_robotDrive.ArcadeDrive(-0.6,0);
+    } 
+  
+  else {
 
+    phase4++;
+    m_encoder1.Reset();
+    m_encoder2.Reset();
+
+  }
+}
 } 
 
 void Robot::TeleopInit() {
@@ -458,9 +489,8 @@ void Robot::TeleopPeriodic() {
   Storage();
   Outtake();
   Movement();
-  // Hanging1();
-  // Hanging2();
-  // Hanging3();
+  RMovement();
+  Hanging1();
   SmartDashboard();
 
 }
@@ -468,26 +498,47 @@ void Robot::TeleopPeriodic() {
 void Robot::Intake() {
 
   if (m_xbox.GetRawButton(1)) {
-
     intake.Set(0.85);
-
   }
-
   if (m_xbox.GetRawButton(2)) {
-
     intake.Set(0.0);
-
   }
+}
 
+void Robot::Hanging1(){ 
+
+  if (m_xbox.GetRawButton(10)){ 
+    Hang1.Set(0.9);
+    Hang2.Set(0.9);
+  }
+  if (m_xbox.GetRawButton(11)){ 
+    Hang1.Set(-0.9);
+    Hang2.Set(-0.9);
+  }
+  if (m_xbox.GetRawButton(12)){ 
+    Hang1.Set(0);
+    Hang2.Set(0);
+  }
 }
 
 void Robot::Movement() {
-
+  
+  if (m_xbox.GetRawButton(5)) {
   // Drive with arcade style
   float xDrive = m_xbox.GetX() * 0.8;
   float yDrive = m_xbox.GetY() * -0.8;
   m_robotDrive.ArcadeDrive(xDrive, yDrive);
+  }
+}
 
+void Robot::RMovement() {
+  if (m_xbox.GetRawButton(6)) {
+
+  // Drive with arcade style
+  float xDrive = m_xbox.GetX() * -0.8;
+  float yDrive = m_xbox.GetY() * 0.8; 
+  m_robotDrive.ArcadeDrive(xDrive, yDrive);
+  }
 }
 
 void Robot::SmartDashboard() {
@@ -498,7 +549,7 @@ void Robot::SmartDashboard() {
   frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
 
   //Gyro SmartDashboard
-  frc::SmartDashboard::PutNumber("NAV sensor", abs(m_gyro.GetAngle()));
+  frc::SmartDashboard::PutNumber("NAV sensor", m_gyro.GetYaw());
 
   //Colour Sensor SmartDashboard
   frc::Color detectedColor = m_colorSensor.GetColor();  
@@ -513,28 +564,25 @@ void Robot::SmartDashboard() {
 
 }
 
-void Robot::Storage() {
+void Robot::Storage() { 
+  if (m_xbox.GetRawButton(12)) {
+    m_storage.Set(0.9);
+  } 
+  if (m_xbox.GetRawButton(13)) { 
+    m_storage.Set(0.0);
+  }
+} 
 
-  m_storage.Set(m_xbox.GetRawAxis(1));
-
-}
-
+ 
 void Robot::Outtake() {
 
-  m_shooter.Set(m_xbox.GetRawAxis(3)*0.8);
-
-  // if (m_xbox.GetRawButton(1)) { //Not sure if "Set" ramps up motor, set to 0.1 or 0.2 to test, must be 0.7
-
-  //   m_shooter.Set(0.10);
-    
-  //   if (m_xbox.GetRawButton(1)) {
-      
-  //     m_shooter.Set(0.0);
-
-  //   }
-
-  // }
-
+ if (m_xbox.GetRawButton(14)) {
+    m_shooter.Set(0.8);
+  } 
+  if (m_xbox.GetRawButton(15)) { 
+    m_shooter.Set(0.0);
+  }
+  
 }
 
 void Robot::DisabledInit() {}
