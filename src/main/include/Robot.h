@@ -18,12 +18,15 @@
 #include <frc/DigitalOutput.h>
 #include "frc/RobotController.h"
 #include "rev/ColorSensorV3.h"
-#include "rev/ColorMatch.h"
+#include "rev/ColorMatch.h" 
 #include <frc/util/color.h>
 #include <frc/AnalogGyro.h>
 #include "cameraserver/CameraServer.h"
 #include "frc/motorcontrol/PWMVictorSPX.h"
 #include "ctre/Phoenix.h"
+#include "frc/PneumaticsBase.h"
+#include "frc/PneumaticsModuleType.h"
+#include <frc/DoubleSolenoid.h>
 
 
 class Robot : public frc::TimedRobot {
@@ -48,7 +51,10 @@ private:
   static const int leftLeadDeviceID = 3;
   static const int rightLeadDeviceID = 4;
   static const int intakeDeviceID = 5;
-
+  const int Hanger1=6; 
+  static const int Hanger2=7; 
+  static const int Hanger3=8; 
+  static const int Hanger4=9;
   static const int storageID = 1;
   static const int shooterID = 2;
 
@@ -68,11 +74,21 @@ private:
   float currentRed;
   float currentBlue;
   
+  // Pneumatics
+  static const int Pneumatics1 = 0;
+  static const int Pneumatics2 = 0;
+
   //Gyro
   AHRS m_gyro{frc::SPI::Port::kMXP};
 
   //Joystick
   frc::Joystick m_xbox{ 0 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 0.
+  
+  //Hanging
+  WPI_VictorSPX Hang1 = {Hanger1};
+  WPI_VictorSPX Hang2 = {Hanger2};
+  WPI_VictorSPX Hang3 = {Hanger3};
+  WPI_VictorSPX Hang4 = {Hanger4};
 
   //DifferentialDrive
   WPI_VictorSPX frontLeft = {leftLeadDeviceID};
@@ -94,7 +110,8 @@ private:
   frc::DigitalOutput ultrasonic_trigger_pin_one{4};
   double ultrasonic_sensor_range_one = 0.0;
   double voltage_scale_factor = 1.0;
-
+  //Pneumatics Set Up
+  frc::DoubleSolenoid m_pneumatic{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
   // Autonomous Variables
   int phase;
   int phase4;
@@ -108,9 +125,8 @@ private:
   void Storage();
   void Outtake();
   void Movement();
-  // void Hanging1();
-  // void Hanging2();
-  // void Hanging3();
+  void RMovement();
+  void Hanging1();
   void SmartDashboard();
 
   //Default
