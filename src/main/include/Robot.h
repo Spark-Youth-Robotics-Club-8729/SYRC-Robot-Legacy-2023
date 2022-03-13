@@ -18,12 +18,17 @@
 #include <frc/DigitalOutput.h>
 #include "frc/RobotController.h"
 #include "rev/ColorSensorV3.h"
-#include "rev/ColorMatch.h" 
+#include "rev/ColorMatch.h"
 #include <frc/util/color.h>
 #include <frc/AnalogGyro.h>
 #include "cameraserver/CameraServer.h"
 #include "frc/motorcontrol/PWMVictorSPX.h"
 #include "ctre/Phoenix.h"
+#include "networktables/NetworkTable.h"
+#include "networktables/NetworkTableInstance.h"
+#include "networktables/NetworkTableEntry.h"
+#include "networktables/NetworkTableValue.h"
+#include "wpi/span.h"
 #include "frc/PneumaticsBase.h"
 #include "frc/PneumaticsModuleType.h"
 #include <frc/DoubleSolenoid.h>
@@ -51,10 +56,12 @@ private:
   static const int leftLeadDeviceID = 3;
   static const int rightLeadDeviceID = 4;
   static const int intakeDeviceID = 5;
-  const int Hanger1=6; 
-  static const int Hanger2=7; 
-  static const int Hanger3=8; 
-  static const int Hanger4=9;
+  static const int Hanger1ID = 6; 
+  static const int Hanger2ID = 7; 
+  static const int Hanger3ID = 8; 
+  static const int Hanger4ID = 9;
+  static const int Hanger5ID = 10;
+  static const int Hanger6ID = 11;
   static const int storageID = 1;
   static const int shooterID = 2;
 
@@ -74,6 +81,7 @@ private:
   float currentRed;
   float currentBlue;
   
+
   // Pneumatics
   static const int Pneumatics1 = 0;
   static const int Pneumatics2 = 0;
@@ -82,14 +90,17 @@ private:
   AHRS m_gyro{frc::SPI::Port::kMXP};
 
   //Joystick
-  frc::Joystick m_stick{1};
   frc::Joystick m_xbox{ 0 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 0.
-  
+  frc::Joystick m_stick{ 1 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 1.
+
   //Hanging
-  WPI_VictorSPX Hang1 = {Hanger1};
-  WPI_VictorSPX Hang2 = {Hanger2};
-  WPI_VictorSPX Hang3 = {Hanger3};
-  WPI_VictorSPX Hang4 = {Hanger4};
+  WPI_VictorSPX Hang1 = {Hanger1ID};
+  WPI_VictorSPX Hang2 = {Hanger2ID};
+  WPI_VictorSPX Hang3 = {Hanger3ID};
+  WPI_VictorSPX Hang4 = {Hanger4ID};
+  WPI_VictorSPX Hang5 = {Hanger5ID};
+  WPI_VictorSPX Hang6 = {Hanger6ID};
+
 
   //DifferentialDrive
   WPI_VictorSPX frontLeft = {leftLeadDeviceID};
@@ -101,18 +112,27 @@ private:
   rev::CANSparkMax m_shooter{shooterID, rev::CANSparkMax::MotorType::kBrushless};
   rev::CANSparkMax m_storage{storageID, rev::CANSparkMax::MotorType::kBrushless};
 
+  //Camera
+  double targetOffsetAngle_Horizontal = 0.0;
+  double targetOffsetAngle_Vertical = 0.0;
+  double targetArea = 0.0;
+  bool intaked = false;
+  const int Camera_Button = 3;
+
   //Encoder Set Up
   frc::Encoder m_encoder1{ EncoderPin1A, EncoderPin1B, true };
   frc::Encoder m_encoder2{ EncoderPin2A, EncoderPin2B, false };
   float encoderAverage;
+
+  //Pneumatics Set Up
+  frc::DoubleSolenoid m_pneumatic{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
 
   // Ultrasonic Set Up
   frc::AnalogInput ultrasonic_sensor_one{0};
   frc::DigitalOutput ultrasonic_trigger_pin_one{4};
   double ultrasonic_sensor_range_one = 0.0;
   double voltage_scale_factor = 1.0;
-  //Pneumatics Set Up
-  frc::DoubleSolenoid m_pneumatic{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
+
   // Autonomous Variables
   int phase;
   int phase4;
@@ -122,6 +142,7 @@ private:
   bool reset;
 
   //Teleop Periodic
+  void Camera();
   void Intake();
   void Storage();
   void Outtake();

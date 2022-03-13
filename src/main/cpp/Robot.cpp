@@ -472,7 +472,9 @@ if (phase4==5){
     m_encoder2.Reset();
 
   }
+
 }
+
 } 
 
 void Robot::TeleopInit() {
@@ -492,17 +494,24 @@ void Robot::TeleopPeriodic() {
   RMovement();
   Hanging1();
   SmartDashboard();
+  Camera();
 
 }
 
 void Robot::Intake() {
 
   if (m_xbox.GetRawButton(1)) {
+
     intake.Set(0.85);
+
   }
+
   if (m_xbox.GetRawButton(2)) {
+
     intake.Set(0.0);
+
   }
+
 }
 
 void Robot::Hanging1(){ 
@@ -522,16 +531,20 @@ void Robot::Hanging1(){
 }
 
 void Robot::Movement() {
-  
+
   if (m_stick.GetRawButton(5)) {
+
   // Drive with arcade style
   float xDrive = m_stick.GetX() * 0.8;
   float yDrive = m_stick.GetY() * -0.8;
   m_robotDrive.ArcadeDrive(xDrive, yDrive);
+
   }
+
 }
 
 void Robot::RMovement() {
+
   if (m_stick.GetRawButton(6)) {
 
   // Drive with arcade style
@@ -539,6 +552,7 @@ void Robot::RMovement() {
   float yDrive = m_stick.GetY() * 0.8; 
   m_robotDrive.ArcadeDrive(xDrive, yDrive);
   }
+
 }
 
 void Robot::SmartDashboard() {
@@ -549,7 +563,7 @@ void Robot::SmartDashboard() {
   frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
 
   //Gyro SmartDashboard
-  frc::SmartDashboard::PutNumber("NAV sensor", m_gyro.GetYaw());
+  frc::SmartDashboard::PutNumber("NAV sensor", abs(m_gyro.GetYaw()));
 
   //Colour Sensor SmartDashboard
   frc::Color detectedColor = m_colorSensor.GetColor();  
@@ -562,27 +576,90 @@ void Robot::SmartDashboard() {
   double  ultrasonic_sensor_range_one = ultrasonic_sensor_one.GetValue() * 0.0492 * voltage_scale_factor;
   frc::SmartDashboard::PutNumber("Sensor 1 Range", ultrasonic_sensor_range_one);
 
+  //Limelight
+  std::shared_ptr table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+  targetOffsetAngle_Horizontal = table->GetNumber("tx",0.0);
+  targetOffsetAngle_Vertical = table->GetNumber("ty",0.0);
+  targetArea = table->GetNumber("ta",0.0);
+
 }
 
-void Robot::Storage() { 
-  if (m_xbox.GetRawButton(12)) {
-    m_storage.Set(0.9);
-  } 
-  if (m_xbox.GetRawButton(13)) { 
-    m_storage.Set(0.0);
-  }
-} 
+void Robot::Storage() {
 
- 
+  if (m_xbox.GetRawButton(12)) {
+
+    m_storage.Set(0.9);
+
+  } 
+
+  if (m_xbox.GetRawButton(13)) { 
+
+    m_storage.Set(0.0);
+
+  }
+
+}
+
 void Robot::Outtake() {
 
- if (m_xbox.GetRawButton(14)) {
+  if (m_xbox.GetRawButton(14)) {
+
     m_shooter.Set(0.8);
+
   } 
+
   if (m_xbox.GetRawButton(15)) { 
+
     m_shooter.Set(0.0);
+
   }
-  
+
+}
+
+void Robot::Camera() {
+
+  if (m_xbox.GetRawButton(Camera_Button)) {
+
+    intaked == false;
+
+    while ( targetOffsetAngle_Horizontal < -5 || targetOffsetAngle_Horizontal > 5) {
+
+      if ( targetOffsetAngle_Horizontal < -5) {
+
+        m_robotDrive.ArcadeDrive(0, 0.5);
+
+      }
+
+      else if ( targetOffsetAngle_Horizontal > 5) {
+
+        m_robotDrive.ArcadeDrive(0, -0.5);
+
+      }
+
+    }
+
+    m_encoder1.Reset();
+    m_encoder2.Reset();
+
+    while (intaked == false) {
+
+    if ((m_encoder2.GetDistance() + m_encoder1.GetDistance())/2 < 60)  { //Test max distance away from cam
+      
+      m_robotDrive.ArcadeDrive(0.6, 0);
+      intake.Set(0.8);
+
+      if (m_xbox.GetRawButton(Camera_Button)) {
+
+        intaked == true;
+
+      }
+
+    }
+
+    }
+
+  }
+
 }
 
 void Robot::DisabledInit() {}
