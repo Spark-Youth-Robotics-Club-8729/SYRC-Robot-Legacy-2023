@@ -523,20 +523,20 @@ void Robot::Hanging1(){
 
 void Robot::Movement() {
   
-  if (m_xbox.GetRawButton(5)) {
+  if (m_stick.GetRawButton(5)) {
   // Drive with arcade style
-  float xDrive = m_xbox.GetX() * 0.8;
-  float yDrive = m_xbox.GetY() * -0.8;
+  float xDrive = m_stick.GetX() * 0.8;
+  float yDrive = m_stick.GetY() * -0.8;
   m_robotDrive.ArcadeDrive(xDrive, yDrive);
   }
 }
 
 void Robot::RMovement() {
-  if (m_xbox.GetRawButton(6)) {
+  if (m_stick.GetRawButton(6)) {
 
   // Drive with arcade style
-  float xDrive = m_xbox.GetX() * -0.8;
-  float yDrive = m_xbox.GetY() * 0.8; 
+  float xDrive = m_stick.GetX() * -0.8;
+  float yDrive = m_stick.GetY() * 0.8; 
   m_robotDrive.ArcadeDrive(xDrive, yDrive);
   }
 }
