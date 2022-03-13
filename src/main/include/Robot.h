@@ -82,6 +82,7 @@ private:
   AHRS m_gyro{frc::SPI::Port::kMXP};
 
   //Joystick
+  frc::Joystick m_stick{1};
   frc::Joystick m_xbox{ 0 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 0.
   
   //Hanging
