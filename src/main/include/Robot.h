@@ -55,6 +55,8 @@ private:
   //CAN Pin Constants
   static const int leftLeadDeviceID = 3;
   static const int rightLeadDeviceID = 4;
+  static const int rightBackDeviceID = 12;
+  static const int leftBackDeviceID = 13;
   static const int intakeDeviceID = 5;
   static const int Hanger1ID = 6; 
   static const int Hanger2ID = 7; 
@@ -105,8 +107,11 @@ private:
   //DifferentialDrive
   WPI_VictorSPX frontLeft = {leftLeadDeviceID};
   WPI_VictorSPX frontRight = {rightLeadDeviceID};
-  WPI_VictorSPX intake = {intakeDeviceID};
   frc::DifferentialDrive m_robotDrive{frontLeft, frontRight};
+  bool reverse = false;
+
+  //Intake
+  rev::CANSparkMax intake {intakeDeviceID, rev::CANSparkMax::MotorType::kBrushed};
 
   //Storage/Shooter
   rev::CANSparkMax m_shooter{shooterID, rev::CANSparkMax::MotorType::kBrushless};
@@ -117,7 +122,7 @@ private:
   double targetOffsetAngle_Vertical = 0.0;
   double targetArea = 0.0;
   bool intaked = false;
-  const int Camera_Button = 3;
+  const int Camera_Button = 9;
 
   //Encoder Set Up
   frc::Encoder m_encoder1{ EncoderPin1A, EncoderPin1B, true };
@@ -125,7 +130,7 @@ private:
   float encoderAverage;
 
   //Pneumatics Set Up
-  frc::DoubleSolenoid m_pneumatic{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
+  frc::DoubleSolenoid m_pneumatics{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
 
   // Ultrasonic Set Up
   frc::AnalogInput ultrasonic_sensor_one{0};
@@ -150,6 +155,7 @@ private:
   void RMovement();
   void Hanging1();
   void SmartDashboard();
+  void Pneumatics();
 
   //Default
   frc::SendableChooser<std::string> m_chooser;

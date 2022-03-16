@@ -500,7 +500,7 @@ void Robot::TeleopPeriodic() {
 
 void Robot::Intake() {
 
-  if (m_xbox.GetRawButton(1)) {
+  if (m_xbox.GetRawButton(0)) {
 
     intake.Set(0.85);
 
@@ -516,41 +516,35 @@ void Robot::Intake() {
 
 void Robot::Hanging1(){ 
 
-  if (m_xbox.GetRawButton(10)){ 
-    Hang1.Set(0.9);
-    Hang2.Set(0.9);
-  }
-  if (m_xbox.GetRawButton(11)){ 
-    Hang1.Set(-0.9);
-    Hang2.Set(-0.9);
-  }
-  if (m_xbox.GetRawButton(12)){ 
-    Hang1.Set(0);
-    Hang2.Set(0);
-  }
+Hang1.Set(m_xbox.GetRawAxis(1)*0.5);
+Hang2.Set(m_xbox.GetRawAxis(1)*0.5);
+Hang3.Set(m_xbox.GetRawAxis(3)*0.5);
+Hang4.Set(m_xbox.GetRawAxis(3)*0.5);
+Hang5.Set(m_xbox.GetRawAxis(0)*0.5);
+Hang6.Set(m_xbox.GetRawAxis(2)*0.5);
+
+
+
 }
 
 void Robot::Movement() {
-
-  if (m_stick.GetRawButton(5)) {
 
   // Drive with arcade style
   float xDrive = m_stick.GetX() * 0.8;
   float yDrive = m_stick.GetY() * -0.8;
   m_robotDrive.ArcadeDrive(xDrive, yDrive);
 
-  }
-
 }
 
 void Robot::RMovement() {
 
-  if (m_stick.GetRawButton(6)) {
+  if (m_stick.GetRawButton(2)) {
 
   // Drive with arcade style
   float xDrive = m_stick.GetX() * -0.8;
   float yDrive = m_stick.GetY() * 0.8; 
   m_robotDrive.ArcadeDrive(xDrive, yDrive);
+
   }
 
 }
@@ -586,13 +580,13 @@ void Robot::SmartDashboard() {
 
 void Robot::Storage() {
 
-  if (m_xbox.GetRawButton(12)) {
+  if (m_xbox.GetRawButton(1)) {
 
-    m_storage.Set(0.9);
+    m_storage.Set(-0.75);
 
   } 
 
-  if (m_xbox.GetRawButton(13)) { 
+  if (m_xbox.GetRawButton(3)) { 
 
     m_storage.Set(0.0);
 
@@ -602,13 +596,13 @@ void Robot::Storage() {
 
 void Robot::Outtake() {
 
-  if (m_xbox.GetRawButton(14)) {
+  if (m_xbox.GetRawButton(7)) {
 
-    m_shooter.Set(0.8);
+    m_shooter.Set(0.75);
 
   } 
 
-  if (m_xbox.GetRawButton(15)) { 
+  if (m_xbox.GetRawButton(6)) { 
 
     m_shooter.Set(0.0);
 
@@ -660,6 +654,15 @@ void Robot::Camera() {
 
   }
 
+}
+
+void Robot::Pneumatics() {
+  if (m_xbox.GetRawButton(10)) {
+    m_pneumatics.Set(frc::DoubleSolenoid::Value::kForward);
+  }
+  if (m_xbox.GetRawButton(11)) {
+    m_pneumatics.Set(frc::DoubleSolenoid::Value::kReverse);
+  }
 }
 
 void Robot::DisabledInit() {}
