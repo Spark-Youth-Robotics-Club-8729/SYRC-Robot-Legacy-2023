@@ -502,7 +502,7 @@ void Robot::Intake() {
 
   if (m_xbox.GetRawButton(0)) {
 
-    intake.Set(0.85);
+    intake.Set(0.80);
 
   }
 
@@ -514,16 +514,14 @@ void Robot::Intake() {
 
 }
 
-void Robot::Hanging1(){ 
+void Robot::Hanging1() { 
 
-Hang1.Set(m_xbox.GetRawAxis(1)*0.5);
-Hang2.Set(m_xbox.GetRawAxis(1)*0.5);
-Hang3.Set(m_xbox.GetRawAxis(3)*0.5);
-Hang4.Set(m_xbox.GetRawAxis(3)*0.5);
-Hang5.Set(m_xbox.GetRawAxis(0)*0.5);
-Hang6.Set(m_xbox.GetRawAxis(2)*0.5);
-
-
+InnerLeftClimber.Set(m_xbox.GetRawAxis(1)*0.5);
+InnerRightClimber.Set(m_xbox.GetRawAxis(1)*0.5);
+OuterLeftClimber.Set(m_xbox.GetRawAxis(3)*0.5);
+OuterRightClimber.Set(m_xbox.GetRawAxis(3)*0.5);
+InnerClimberLateral.Set(m_xbox.GetRawAxis(0)*0.5);
+OuterClimberLateral.Set(m_xbox.GetRawAxis(2)*0.5);
 
 }
 
@@ -580,13 +578,13 @@ void Robot::SmartDashboard() {
 
 void Robot::Storage() {
 
-  if (m_xbox.GetRawButton(1)) {
+  if (m_xbox.GetRawButton(4)) {
 
     m_storage.Set(-0.75);
 
   } 
 
-  if (m_xbox.GetRawButton(3)) { 
+  if (m_xbox.GetRawButton(5)) { 
 
     m_storage.Set(0.0);
 
@@ -596,13 +594,13 @@ void Robot::Storage() {
 
 void Robot::Outtake() {
 
-  if (m_xbox.GetRawButton(7)) {
+  if (m_xbox.GetRawButton(6)) {
 
     m_shooter.Set(0.75);
 
   } 
 
-  if (m_xbox.GetRawButton(6)) { 
+  if (m_xbox.GetRawButton(7)) { 
 
     m_shooter.Set(0.0);
 
@@ -612,7 +610,7 @@ void Robot::Outtake() {
 
 void Robot::Camera() {
 
-  if (m_xbox.GetRawButton(Camera_Button)) {
+  if (m_xbox.GetRawButton(8)) {
 
     intaked == false;
 
@@ -642,7 +640,7 @@ void Robot::Camera() {
       m_robotDrive.ArcadeDrive(0.6, 0);
       intake.Set(0.8);
 
-      if (m_xbox.GetRawButton(Camera_Button)) {
+      if (m_xbox.GetRawButton(8)) {
 
         intaked == true;
 
@@ -657,10 +655,10 @@ void Robot::Camera() {
 }
 
 void Robot::Pneumatics() {
-  if (m_xbox.GetRawButton(10)) {
+  if (m_xbox.GetRawButton(1)) {
     m_pneumatics.Set(frc::DoubleSolenoid::Value::kForward);
   }
-  if (m_xbox.GetRawButton(11)) {
+  if (m_xbox.GetRawButton(3)) {
     m_pneumatics.Set(frc::DoubleSolenoid::Value::kReverse);
   }
 }

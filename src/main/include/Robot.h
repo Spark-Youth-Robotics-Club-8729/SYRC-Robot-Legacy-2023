@@ -53,19 +53,20 @@ public:
 private:
 
   //CAN Pin Constants
-  static const int leftLeadDeviceID = 3;
-  static const int rightLeadDeviceID = 4;
-  static const int rightBackDeviceID = 12;
-  static const int leftBackDeviceID = 13;
-  static const int intakeDeviceID = 5;
-  static const int Hanger1ID = 6; 
-  static const int Hanger2ID = 7; 
-  static const int Hanger3ID = 8; 
-  static const int Hanger4ID = 9;
-  static const int Hanger5ID = 10;
-  static const int Hanger6ID = 11;
   static const int storageID = 1;
   static const int shooterID = 2;
+  static const int intakeDeviceID = 3;
+  static const int leftLeadDeviceID = 4;
+  static const int rightLeadDeviceID = 5;
+  static const int leftBackDeviceID = 6;
+  static const int rightBackDeviceID = 7;
+  static const int Hanger1ID = 8; 
+  static const int Hanger2ID = 9; 
+  static const int Hanger3ID = 10; 
+  static const int Hanger4ID = 11;
+  static const int Hanger5ID = 12;
+  static const int Hanger6ID = 13;
+
 
 
   //Encoder Pin Constants
@@ -96,12 +97,12 @@ private:
   frc::Joystick m_stick{ 1 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 1.
 
   //Hanging
-  WPI_VictorSPX Hang1 = {Hanger1ID};
-  WPI_VictorSPX Hang2 = {Hanger2ID};
-  WPI_VictorSPX Hang3 = {Hanger3ID};
-  WPI_VictorSPX Hang4 = {Hanger4ID};
-  WPI_VictorSPX Hang5 = {Hanger5ID};
-  WPI_VictorSPX Hang6 = {Hanger6ID};
+  WPI_VictorSPX InnerLeftClimber = {Hanger1ID};
+  WPI_VictorSPX InnerRightClimber = {Hanger2ID};
+  WPI_VictorSPX OuterLeftClimber = {Hanger3ID};
+  WPI_VictorSPX OuterRightClimber = {Hanger4ID};
+  WPI_VictorSPX InnerClimberLateral = {Hanger5ID};
+  WPI_VictorSPX OuterClimberLateral = {Hanger6ID};
 
 
   //DifferentialDrive
