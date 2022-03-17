@@ -500,13 +500,13 @@ void Robot::TeleopPeriodic() {
 
 void Robot::Intake() {
 
-  if (m_xbox.GetRawButton(0)) {
+  if (m_xbox.GetRawButton(1)) {
 
-    intake.Set(0.80);
+    intake.Set(-0.80);
 
   }
 
-  if (m_xbox.GetRawButton(2)) {
+  if (m_xbox.GetRawButton(3)) {
 
     intake.Set(0.0);
 
@@ -516,12 +516,27 @@ void Robot::Intake() {
 
 void Robot::Hanging1() { 
 
-InnerLeftClimber.Set(m_xbox.GetRawAxis(1)*0.5);
-InnerRightClimber.Set(m_xbox.GetRawAxis(1)*0.5);
-OuterLeftClimber.Set(m_xbox.GetRawAxis(3)*0.5);
-OuterRightClimber.Set(m_xbox.GetRawAxis(3)*0.5);
-InnerClimberLateral.Set(m_xbox.GetRawAxis(0)*0.5);
-OuterClimberLateral.Set(m_xbox.GetRawAxis(2)*0.5);
+InnerLeftClimber.Set(m_xbox.GetRawAxis(1)*0.75);
+InnerRightClimber.Set(m_xbox.GetRawAxis(1)*0.75);
+OuterLeftClimber.Set(m_xbox.GetRawAxis(3)*0.75);
+OuterRightClimber.Set(m_xbox.GetRawAxis(3)*0.75);
+InnerClimberLateral.Set(m_xbox.GetRawAxis(0)*0.80);
+OuterClimberLateral.Set(m_xbox.GetRawAxis(2)*0.80);
+
+if (m_stick.GetRawButton(7)) {
+
+InnerLeftClimber.Set(0.4);
+InnerRightClimber.Set(0.4);
+
+}
+
+if (m_stick.GetRawButton(8)) {
+
+OuterLeftClimber.Set(0.4);
+OuterRightClimber.Set(0.4);
+
+}
+
 
 }
 
@@ -539,7 +554,7 @@ void Robot::RMovement() {
   if (m_stick.GetRawButton(2)) {
 
   // Drive with arcade style
-  float xDrive = m_stick.GetX() * -0.8;
+  float xDrive = m_stick.GetX() * 0.8;
   float yDrive = m_stick.GetY() * 0.8; 
   m_robotDrive.ArcadeDrive(xDrive, yDrive);
 
@@ -555,7 +570,7 @@ void Robot::SmartDashboard() {
   frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
 
   //Gyro SmartDashboard
-  frc::SmartDashboard::PutNumber("NAV sensor", abs(m_gyro.GetYaw()));
+  frc::SmartDashboard::PutNumber("NAV sensor", m_gyro.GetYaw());
 
   //Colour Sensor SmartDashboard
   frc::Color detectedColor = m_colorSensor.GetColor();  
@@ -578,13 +593,13 @@ void Robot::SmartDashboard() {
 
 void Robot::Storage() {
 
-  if (m_xbox.GetRawButton(4)) {
+  if (m_xbox.GetRawButton(5)) {
 
-    m_storage.Set(-0.75);
+    m_storage.Set(-0.80);
 
   } 
 
-  if (m_xbox.GetRawButton(5)) { 
+  if (m_xbox.GetRawButton(6)) { 
 
     m_storage.Set(0.0);
 
@@ -594,13 +609,13 @@ void Robot::Storage() {
 
 void Robot::Outtake() {
 
-  if (m_xbox.GetRawButton(6)) {
+  if (m_xbox.GetRawButton(7)) {
 
-    m_shooter.Set(0.75);
+    m_shooter.Set(0.80);
 
   } 
 
-  if (m_xbox.GetRawButton(7)) { 
+  if (m_xbox.GetRawButton(8)) { 
 
     m_shooter.Set(0.0);
 
@@ -610,56 +625,59 @@ void Robot::Outtake() {
 
 void Robot::Camera() {
 
-  if (m_xbox.GetRawButton(8)) {
+  // if (m_xbox.GetRawButton(9)) {
 
-    intaked == false;
+  //   intaked = false;
 
-    while ( targetOffsetAngle_Horizontal < -5 || targetOffsetAngle_Horizontal > 5) {
+  //   while ( targetOffsetAngle_Horizontal < -5 || targetOffsetAngle_Horizontal > 5) {
 
-      if ( targetOffsetAngle_Horizontal < -5) {
+  //     if ( targetOffsetAngle_Horizontal < -5) {
 
-        m_robotDrive.ArcadeDrive(0, 0.5);
+  //       m_robotDrive.ArcadeDrive(0, 0.5);
 
-      }
+  //     }
 
-      else if ( targetOffsetAngle_Horizontal > 5) {
+  //     else if ( targetOffsetAngle_Horizontal > 5) {
 
-        m_robotDrive.ArcadeDrive(0, -0.5);
+  //       m_robotDrive.ArcadeDrive(0, -0.5);
 
-      }
+  //     }
 
-    }
+  //   }
 
-    m_encoder1.Reset();
-    m_encoder2.Reset();
+  //   m_encoder1.Reset();
+  //   m_encoder2.Reset();
 
-    while (intaked == false) {
+  //   while (intaked == false) {
 
-    if ((m_encoder2.GetDistance() + m_encoder1.GetDistance())/2 < 60)  { //Test max distance away from cam
+  //   if ((m_encoder2.GetDistance() + m_encoder1.GetDistance())/2 < 60)  { //Test max distance away from cam
       
-      m_robotDrive.ArcadeDrive(0.6, 0);
-      intake.Set(0.8);
+  //     m_robotDrive.ArcadeDrive(0.6, 0);
+  //     intake.Set(0.8);
 
-      if (m_xbox.GetRawButton(8)) {
+  //     if (m_xbox.GetRawButton(8)) {
 
-        intaked == true;
+  //       intaked == true;
 
-      }
+  //     }
 
-    }
+  //   }
 
-    }
+  //   }
 
-  }
+  // }
 
 }
 
 void Robot::Pneumatics() {
-  if (m_xbox.GetRawButton(1)) {
+  if (m_xbox.GetRawButton(2)) {
     m_pneumatics.Set(frc::DoubleSolenoid::Value::kForward);
   }
-  if (m_xbox.GetRawButton(3)) {
+  if (m_xbox.GetRawButton(4)) {
     m_pneumatics.Set(frc::DoubleSolenoid::Value::kReverse);
+  }
+  else {
+    m_pneumatics.Set(frc::DoubleSolenoid::Value::kOff);
   }
 }
 

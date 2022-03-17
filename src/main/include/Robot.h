@@ -32,6 +32,9 @@
 #include "frc/PneumaticsBase.h"
 #include "frc/PneumaticsModuleType.h"
 #include <frc/DoubleSolenoid.h>
+#include <frc/PneumaticsControlModule.h>
+#include <frc/Compressor.h>
+#include <frc/motorcontrol/MotorControllerGroup.h>
 
 
 class Robot : public frc::TimedRobot {
@@ -86,8 +89,10 @@ private:
   
 
   // Pneumatics
-  static const int Pneumatics1 = 0;
+  static const int Pneumatics1 = 1;
   static const int Pneumatics2 = 0;
+  frc::DoubleSolenoid m_pneumatics{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
+  frc::Compressor pcmCompressor {0, frc::PneumaticsModuleType::CTREPCM};
 
   //Gyro
   AHRS m_gyro{frc::SPI::Port::kMXP};
@@ -108,7 +113,11 @@ private:
   //DifferentialDrive
   WPI_VictorSPX frontLeft = {leftLeadDeviceID};
   WPI_VictorSPX frontRight = {rightLeadDeviceID};
-  frc::DifferentialDrive m_robotDrive{frontLeft, frontRight};
+  WPI_VictorSPX backRight = {rightBackDeviceID};
+  WPI_VictorSPX backLeft = {leftBackDeviceID};
+  frc::MotorControllerGroup m_left{frontLeft, backLeft};
+  frc::MotorControllerGroup m_right{frontRight, backRight};
+  frc::DifferentialDrive m_robotDrive{m_left, m_right};
   bool reverse = false;
 
   //Intake
@@ -130,8 +139,6 @@ private:
   frc::Encoder m_encoder2{ EncoderPin2A, EncoderPin2B, false };
   float encoderAverage;
 
-  //Pneumatics Set Up
-  frc::DoubleSolenoid m_pneumatics{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
 
   // Ultrasonic Set Up
   frc::AnalogInput ultrasonic_sensor_one{0};
