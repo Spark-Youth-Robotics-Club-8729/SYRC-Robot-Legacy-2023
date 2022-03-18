@@ -35,6 +35,7 @@
 #include <frc/PneumaticsControlModule.h>
 #include <frc/Compressor.h>
 #include <frc/motorcontrol/MotorControllerGroup.h>
+#include <rev/CANEncoder.h>
 
 
 class Robot : public frc::TimedRobot {
@@ -77,6 +78,7 @@ private:
   static const int EncoderPin1B = 1;
   static const int EncoderPin2A = 2;
   static const int EncoderPin2B = 3;
+
 
   // I2C Port
   static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
@@ -138,6 +140,8 @@ private:
   frc::Encoder m_encoder1{ EncoderPin1A, EncoderPin1B, true };
   frc::Encoder m_encoder2{ EncoderPin2A, EncoderPin2B, false };
   float encoderAverage;
+  rev::SparkMaxRelativeEncoder m_ShooterEncoder = m_shooter.GetEncoder();
+  rev::SparkMaxRelativeEncoder m_FeederEncoder = m_storage.GetEncoder();
 
 
   // Ultrasonic Set Up
@@ -167,7 +171,8 @@ private:
 
   //Default
   frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Default";
-  const std::string kAutoNameCustom = "My Auto";
+  const std::string kAutoNameDefault = "Route1/2";
+  const std::string kAutoNameCustom1 = "Route3";
+  const std::string kAutoNameCustom2 = "Route4";
   std::string m_autoSelected;
 };
