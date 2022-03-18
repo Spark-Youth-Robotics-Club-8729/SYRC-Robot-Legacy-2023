@@ -89,7 +89,7 @@ encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
 //ROUTE 1:
 
 // Phase 0: Drive from starting position to hub
-
+if (m_autoSelected == kAutoNameCustom) {
 if (phase == 0) { 
   
   if (ultrasonic_sensor_range_one > 20) { //If farther than 20 inches from lower hub, driving until 20 inchs from lower hub
@@ -198,12 +198,12 @@ if (phase == 3) {
 
 }
 
-
+}
 //********************************************************************************************************************************
 
 
 // Route 3:
-
+else {
 if(phase3==0) { //Outtake ball
     
     if (cargo_Outtake_Time <= 200){
@@ -365,115 +365,115 @@ else if (phase3==7) { //Outtake ball
 
 }
 
-
+}
 //********************************************************************************************************************************
 
 
-// Route 4:
-if (phase4==-1){//Outtake ball
-    if (cargo_Outtake_Time <= 200){ 
+// // Route 4:
+// if (phase4==-1){//Outtake ball
+//     if (cargo_Outtake_Time <= 200){ 
     
-    cargo_Outtake_Time+=1; 
-    m_shooter.Set(0.9);
-      if (cargo_Outtake_Time >= 50){
-        m_storage.Set(0.9); 
-      } 
-    }
-    else{
-      phase4=0;
-    }
-}
-if (phase4==0){ //Turn 180 degrees
+//     cargo_Outtake_Time+=1; 
+//     m_shooter.Set(0.9);
+//       if (cargo_Outtake_Time >= 50){
+//         m_storage.Set(0.9); 
+//       } 
+//     }
+//     else{
+//       phase4=0;
+//     }
+// }
+// if (phase4==0){ //Turn 180 degrees
 
-  if(m_gyro.GetYaw()>-180){
+//   if(m_gyro.GetYaw()>-180){
 
-    m_robotDrive.ArcadeDrive(0.6,0);
+//     m_robotDrive.ArcadeDrive(0.6,0);
 
-  }
+//   }
   
-  else {
+//   else {
 
-    phase4=1;
-    m_encoder1.Reset();
-    m_encoder2.Reset();
+//     phase4=1;
+//     m_encoder1.Reset();
+//     m_encoder2.Reset();
 
-  }
+//   }
 
-}
+// }
 
-if (phase4==1) { //Go back until 40 inches away from wall
+// if (phase4==1) { //Go back until 40 inches away from wall
 
-  if (ultrasonic_sensor_range_one>=20.0) {
+//   if (ultrasonic_sensor_range_one>=20.0) {
 
-    m_robotDrive.ArcadeDrive(0, 0.5); // Drive until 40 inches from back wall
-    m_encoder1.Reset();
-    m_encoder2.Reset();
+//     m_robotDrive.ArcadeDrive(0, 0.5); // Drive until 40 inches from back wall
+//     m_encoder1.Reset();
+//     m_encoder2.Reset();
 
-  }
+//   }
   
-  else {
+//   else {
 
-    phase4=2;
-    m_gyro.Reset();
+//     phase4=2;
+//     m_gyro.Reset();
 
-  }
+//   }
 
-}
+// }
 
-if (phase4==2){ //Turn 90 degrees
+// if (phase4==2){ //Turn 90 degrees
   
-  if(m_gyro.GetYaw()<90) {
+//   if(m_gyro.GetYaw()<90) {
 
-    m_robotDrive.ArcadeDrive(0.6,0);
+//     m_robotDrive.ArcadeDrive(0.6,0);
 
-  }
+//   }
   
-  else {
+//   else {
 
-    phase4=3;
-    m_encoder1.Reset();
-    m_encoder2.Reset();
+//     phase4=3;
+//     m_encoder1.Reset();
+//     m_encoder2.Reset();
 
-  }
+//   }
 
-}
+// }
 
-if (phase4==3) { //Go fowards till terminal ball and push it to the human player
+// if (phase4==3) { //Go fowards till terminal ball and push it to the human player
   
-  if (m_encoder2.GetDistance()>=-20) {
+//   if (m_encoder2.GetDistance()>=-20) {
 
-    m_robotDrive.ArcadeDrive(0,-0.5);
-    if(m_encoder2.GetDistance()>=-10){
-      intake.Set(0.9);
-    }
-  } 
-  else{
-    phase4++;
-  }
+//     m_robotDrive.ArcadeDrive(0,-0.5);
+//     if(m_encoder2.GetDistance()>=-10){
+//       intake.Set(0.9);
+//     }
+//   } 
+//   else{
+//     phase4++;
+//   }
 
-}
-if (phase4==4){
-  if(m_encoder2.GetDistance()<0){
-    m_robotDrive.ArcadeDrive(0,-0,5);
-  } else{
-    phase4++;
-    m_encoder1.Reset();
-  }
-}
-if (phase4==5){
-    if(m_gyro.GetYaw()>-90) {
-      m_robotDrive.ArcadeDrive(-0.6,0);
-    } 
+// }
+// if (phase4==4){
+//   if(m_encoder2.GetDistance()<0){
+//     m_robotDrive.ArcadeDrive(0,-0,5);
+//   } else{
+//     phase4++;
+//     m_encoder1.Reset();
+//   }
+// }
+// if (phase4==5){
+//     if(m_gyro.GetYaw()>-90) {
+//       m_robotDrive.ArcadeDrive(-0.6,0);
+//     } 
   
-  else {
+//   else {
 
-    phase4++;
-    m_encoder1.Reset();
-    m_encoder2.Reset();
+//     phase4++;
+//     m_encoder1.Reset();
+//     m_encoder2.Reset();
 
-  }
+//   }
 
-}
+// }
 
 } 
 
@@ -523,19 +523,19 @@ OuterRightClimber.Set(m_xbox.GetRawAxis(3)*0.75);
 InnerClimberLateral.Set(m_xbox.GetRawAxis(0)*0.80);
 OuterClimberLateral.Set(m_xbox.GetRawAxis(2)*0.80);
 
-if (m_stick.GetRawButton(7)) {
+// if (m_stick.GetRawButton(7)) {
 
-InnerLeftClimber.Set(0.4);
-InnerRightClimber.Set(0.4);
+// InnerLeftClimber.Set(0.4);
+// InnerRightClimber.Set(0.4);
 
-}
+// }
 
-if (m_stick.GetRawButton(8)) {
+// if (m_stick.GetRawButton(8)) {
 
-OuterLeftClimber.Set(0.4);
-OuterRightClimber.Set(0.4);
+// OuterLeftClimber.Set(0.4);
+// OuterRightClimber.Set(0.4);
 
-}
+// }
 
 
 }
@@ -625,7 +625,7 @@ void Robot::Outtake() {
 
 void Robot::Camera() {
 
-  // if (m_xbox.GetRawButton(9)) {
+  // if (m_stick.GetRawButton(9) && intaked == true) {
 
   //   intaked = false;
 
@@ -655,9 +655,9 @@ void Robot::Camera() {
   //     m_robotDrive.ArcadeDrive(0.6, 0);
   //     intake.Set(0.8);
 
-  //     if (m_xbox.GetRawButton(8)) {
+  //     if (m_xbox.GetRawButton(9) && intaked == false) {
 
-  //       intaked == true;
+  //       intaked = true;
 
   //     }
 
@@ -670,6 +670,12 @@ void Robot::Camera() {
 }
 
 void Robot::Pneumatics() {
+  if (m_xbox.GetRawButton(9)) {
+    pcmCompressor.Start();
+  }
+  if (m_xbox.GetRawButton(10)) {
+    pcmCompressor.Stop();
+  }
   if (m_xbox.GetRawButton(2)) {
     m_pneumatics.Set(frc::DoubleSolenoid::Value::kForward);
   }

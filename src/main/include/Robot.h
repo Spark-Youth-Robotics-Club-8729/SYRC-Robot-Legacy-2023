@@ -89,8 +89,8 @@ private:
   
 
   // Pneumatics
-  static const int Pneumatics1 = 1;
-  static const int Pneumatics2 = 0;
+  static const int Pneumatics1 = 0; //Forward Channel
+  static const int Pneumatics2 = 1; //Reverse Channel
   frc::DoubleSolenoid m_pneumatics{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
   frc::Compressor pcmCompressor {0, frc::PneumaticsModuleType::CTREPCM};
 
@@ -131,7 +131,7 @@ private:
   double targetOffsetAngle_Horizontal = 0.0;
   double targetOffsetAngle_Vertical = 0.0;
   double targetArea = 0.0;
-  bool intaked = false;
+  bool intaked = true;
   const int Camera_Button = 9;
 
   //Encoder Set Up
