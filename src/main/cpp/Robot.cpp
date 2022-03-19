@@ -23,6 +23,8 @@ void Robot::RobotInit() {
   m_encoder1.SetDistancePerPulse((3.14159265358 * 6) / 360.0);
   m_encoder2.SetDistancePerPulse((3.14159265358 * 6) / 360.0);
 
+  // Shooting time
+  shoottime=0;
 
   // Ultrasonic 
   ultrasonic_trigger_pin_one.Set(true);
@@ -552,8 +554,25 @@ void Robot::Outtake() {
 
   if (m_xbox.GetRawButton(7)) {
 
-    m_shooter.Set(0.35); //0.60
-
+    if (shoottime == 0) {
+      m_shooter.Set(0);
+    }    
+    else if (shoottime>0 && shoottime<=300){
+      m_shooter.Set(0.13);
+    }
+    else if (shoottime>300 && shoottime<=600){
+      m_shooter.Set(0.26);
+    }
+    else if (shoottime>600 && shoottime<=900){
+      m_shooter.Set(0.39);
+    }
+    else if (shoottime>900 && shoottime<=1200){
+      m_shooter.Set(0.52);
+    }
+    else if (shoottime>1200 && shoottime<=1500){
+      m_shooter.Set(0.65);
+    }
+    shoottime++;
   } 
 
   if (m_xbox.GetRawButton(8)) { 
