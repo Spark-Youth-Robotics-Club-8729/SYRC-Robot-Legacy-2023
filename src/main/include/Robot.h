@@ -102,6 +102,10 @@ private:
   //Joystick
   frc::Joystick m_xbox{ 0 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 0.
   frc::Joystick m_stick{ 1 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 1.
+  frc::Joystick m_test{ 2 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 2.
+  frc::Joystick m_test1{ 3 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 3.
+
+
 
   //Hanging
   WPI_VictorSPX InnerLeftClimber = {Hanger1ID};
@@ -115,11 +119,11 @@ private:
   //DifferentialDrive
   WPI_VictorSPX frontLeft = {leftLeadDeviceID};
   WPI_VictorSPX frontRight = {rightLeadDeviceID};
-  WPI_VictorSPX backRight = {rightBackDeviceID};
-  WPI_VictorSPX backLeft = {leftBackDeviceID};
-  frc::MotorControllerGroup m_left{frontLeft, backLeft};
-  frc::MotorControllerGroup m_right{frontRight, backRight};
-  frc::DifferentialDrive m_robotDrive{m_left, m_right};
+  // WPI_VictorSPX backRight = {rightBackDeviceID};
+  // WPI_VictorSPX backLeft = {leftBackDeviceID};
+  // frc::MotorControllerGroup m_left{frontLeft, backLeft};
+  // frc::MotorControllerGroup m_right{frontRight, backRight};
+  frc::DifferentialDrive m_robotDrive{frontLeft, frontRight};
   bool reverse = false;
 
   //Intake
