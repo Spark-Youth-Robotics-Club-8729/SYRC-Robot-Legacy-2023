@@ -23,8 +23,6 @@ void Robot::RobotInit() {
   m_encoder1.SetDistancePerPulse((3.14159265358 * 6) / 360.0);
   m_encoder2.SetDistancePerPulse((3.14159265358 * 6) / 360.0);
 
-  // Shooting time
-  shoottime=0;
 
   // Ultrasonic 
   ultrasonic_trigger_pin_one.Set(true);
@@ -94,6 +92,7 @@ encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
 
 // Phase 2: Drive to edge of tarmac OR getting out of tarmac when reset happens
 
+if (m_autoSelected==kAutoNameDefault) {
 if (phase == 1) {
 
   if (m_encoder2.GetDistance() > -61) {  // Driving until a high sense in colour, Depends on whether we are Red or Blue
@@ -134,12 +133,15 @@ if (phase == 3) {
 if (phase==4) {
   if (cargo_Outtake_Time <150) {
     cargo_Outtake_Time++;
+    intake.Set(0.0);
+    m_shooter.Set(0.0);
+    m_storage.Set(0.0);
   }
   else {
     phase=5;
   }
 }
-
+}
 
 //********************************************************************************************************************************
 
@@ -431,14 +433,16 @@ void Robot::TeleopPeriodic() {
 void Robot::Intake() {
 
   if (m_xbox.GetRawButton(1)) {
-
     intake.Set(-0.80);
-
   }
 
   if (m_xbox.GetRawButton(3)) {
-
     intake.Set(0.0);
+  }
+
+  if (m_xbox.GetRawButton(9)) {
+
+    intake.Set(0.80);
 
   }
 
@@ -536,15 +540,11 @@ void Robot::SmartDashboard() {
 void Robot::Storage() {
 
   if (m_xbox.GetRawButton(5)) {
-
-    m_storage.Set(-0.80); //0.45
-
+    m_storage.Set(-0.95); //0.45 //0.95
   } 
 
   if (m_xbox.GetRawButton(6)) { 
-
     m_storage.Set(0.0);
-
   }
 
   // m_storage.Set(m_stick.GetRawAxis(3)*0.95);
@@ -553,32 +553,12 @@ void Robot::Storage() {
 void Robot::Outtake() {
 
   if (m_xbox.GetRawButton(7)) {
-
-    if (shoottime == 0) {
-      m_shooter.Set(0);
-    }    
-    else if (shoottime>0 && shoottime<=300){
-      m_shooter.Set(0.13);
-    }
-    else if (shoottime>300 && shoottime<=600){
-      m_shooter.Set(0.26);
-    }
-    else if (shoottime>600 && shoottime<=900){
-      m_shooter.Set(0.39);
-    }
-    else if (shoottime>900 && shoottime<=1200){
-      m_shooter.Set(0.52);
-    }
-    else if (shoottime>1200 && shoottime<=1500){
-      m_shooter.Set(0.65);
-    }
-    shoottime++;
-  } 
+    m_shooter.Set(-0.65);
+  }
+   //0.60//0.65 
 
   if (m_xbox.GetRawButton(8)) { 
-
-    m_shooter.Set(0.0);
-
+    m_shooter.Set(-0.4);
   }
 
 }
@@ -641,9 +621,6 @@ void Robot::Pneumatics() {
   }
   if (m_xbox.GetRawButton(4)) {
     m_pneumatics.Set(frc::DoubleSolenoid::Value::kReverse);
-  }
-  else {
-    m_pneumatics.Set(frc::DoubleSolenoid::Value::kOff);
   }
 }
 

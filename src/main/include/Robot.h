@@ -119,11 +119,11 @@ private:
   //DifferentialDrive
   WPI_VictorSPX frontLeft = {leftLeadDeviceID};
   WPI_VictorSPX frontRight = {rightLeadDeviceID};
-  // WPI_VictorSPX backRight = {rightBackDeviceID};
-  // WPI_VictorSPX backLeft = {leftBackDeviceID};
-  // frc::MotorControllerGroup m_left{frontLeft, backLeft};
-  // frc::MotorControllerGroup m_right{frontRight, backRight};
-  frc::DifferentialDrive m_robotDrive{frontLeft, frontRight};
+  WPI_VictorSPX backRight = {rightBackDeviceID};
+  WPI_VictorSPX backLeft = {leftBackDeviceID};
+  frc::MotorControllerGroup m_left{frontLeft, backLeft};
+  frc::MotorControllerGroup m_right{frontRight, backRight};
+  frc::DifferentialDrive m_robotDrive{m_left, m_right};
   bool reverse = false;
 
   //Intake
@@ -147,6 +147,10 @@ private:
   rev::SparkMaxRelativeEncoder m_ShooterEncoder = m_shooter.GetEncoder();
   rev::SparkMaxRelativeEncoder m_FeederEncoder = m_storage.GetEncoder();
 
+  //Ramp Time
+  int shoottime=0;
+  int intaketime=0;
+  int feedertime=0;
 
   // Ultrasonic Set Up
   frc::AnalogInput ultrasonic_sensor_one{0};
