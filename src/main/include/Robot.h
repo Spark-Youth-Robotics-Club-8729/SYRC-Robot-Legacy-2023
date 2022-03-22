@@ -91,8 +91,8 @@ private:
   
 
   // Pneumatics
-  static const int Pneumatics1 = 0; //Forward Channel
-  static const int Pneumatics2 = 1; //Reverse Channel
+  static const int Pneumatics1 = 2; //Forward Channel
+  static const int Pneumatics2 = 3; //Reverse Channel
   frc::DoubleSolenoid m_pneumatics{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
   frc::Compressor pcmCompressor {0, frc::PneumaticsModuleType::CTREPCM};
 
