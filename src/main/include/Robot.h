@@ -89,13 +89,6 @@ private:
   float currentRed;
   float currentBlue;
   
-
-  // Pneumatics
-  static const int Pneumatics1 = 2; //Forward Channel
-  static const int Pneumatics2 = 3; //Reverse Channel
-  frc::DoubleSolenoid m_pneumatics{frc::PneumaticsModuleType::CTREPCM, Pneumatics1, Pneumatics2};
-  frc::Compressor pcmCompressor {0, frc::PneumaticsModuleType::CTREPCM};
-
   //Gyro
   AHRS m_gyro{frc::SPI::Port::kMXP};
 
@@ -104,8 +97,6 @@ private:
   frc::Joystick m_stick{ 1 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 1.
   frc::Joystick m_test{ 2 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 2.
   frc::Joystick m_test1{ 3 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 3.
-
-
 
   //Hanging
   WPI_VictorSPX InnerLeftClimber = {Hanger1ID};
@@ -172,10 +163,8 @@ private:
   void Storage();
   void Outtake();
   void Movement();
-  void RMovement();
   void Hanging1();
   void SmartDashboard();
-  void Pneumatics();
 
   //Default
   frc::SendableChooser<std::string> m_chooser;
