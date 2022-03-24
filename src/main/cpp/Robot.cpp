@@ -91,8 +91,8 @@ encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
 
 // Phase 2: Drive to edge of tarmac OR getting out of tarmac when reset happens
 if (phase == 0) {
-  if (cargo_Intake_Time < 200) {
-    InnerClimberLateral.Set(0.90);
+  if (cargo_Intake_Time < 150) {
+    InnerClimberLateral.Set(0.95);
     cargo_Intake_Time++;
   }
   else {
@@ -105,7 +105,7 @@ if (phase == 1) {
 
   if (encoderAverage > -61) {  // Driving until a high sense in colour, Depends on whether we are Red or Blue
     
-    m_robotDrive.ArcadeDrive(0, 0.40); 
+    m_robotDrive.ArcadeDrive(0, 0.70); 
     intake.Set(-0.80);
     InnerClimberLateral.Set(0.0);
   } 
@@ -128,7 +128,7 @@ if (phase==2) {
 
 if (phase == 3) {
   if (encoderAverage < -30) {
-    m_robotDrive.ArcadeDrive(0, -0.40);
+    m_robotDrive.ArcadeDrive(0, -0.70);
   }
   else {
     phase = 4;
@@ -143,17 +143,18 @@ if (phase == 4) {
 
   }
 if (phase==5) {
-  if (cargo_Outtake_Time <150) {
+  if (cargo_Outtake_Time < 150) {
     cargo_Outtake_Time++;
-    if (cargo_Outtake_Time < 50) {
-      m_storage.Set(-0.95);
-    }
-    if (50 < cargo_Outtake_Time < 100) {
-      m_storage.Set(0.0);
-    }
-    if (100 < cargo_Outtake_Time < 150) {
-      m_storage.Set(-0.95);
-    }
+    // if (cargo_Outtake_Time < 50) {
+    //   m_storage.Set(-0.95);
+    // }
+    // if (50 < cargo_Outtake_Time < 100) {
+    //   m_storage.Set(0.0);
+    // }
+    // if (100 < cargo_Outtake_Time < 150) {
+    //   m_storage.Set(-0.95);
+    // }
+    m_storage.Set(-0.95);
   }
   else {
     phase=6;
@@ -165,7 +166,7 @@ if (phase==5) {
 
 if (phase==6) {
   if (encoderAverage > -61) {
-    m_robotDrive.ArcadeDrive(0, 0.40);
+    m_robotDrive.ArcadeDrive(0, 0.70);
   }
 }
 //********************************************************************************************************************************
