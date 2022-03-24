@@ -83,14 +83,14 @@ private:
   // I2C Port
   static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
 
-  // Colour Sensor
-  rev::ColorSensorV3 m_colorSensor{i2cPort};
-  rev::ColorMatch m_colorMatcher;
-  float currentRed;
-  float currentBlue;
+  // // Colour Sensor
+  // rev::ColorSensorV3 m_colorSensor{i2cPort};
+  // rev::ColorMatch m_colorMatcher;
+  // float currentRed;
+  // float currentBlue;
   
-  //Gyro
-  AHRS m_gyro{frc::SPI::Port::kMXP};
+  // //Gyro
+  // AHRS m_gyro{frc::SPI::Port::kMXP};
 
   //Joystick
   frc::Joystick m_xbox{ 0 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 0.
@@ -143,11 +143,11 @@ private:
   int intaketime=0;
   int feedertime=0;
 
-  // Ultrasonic Set Up
-  frc::AnalogInput ultrasonic_sensor_one{0};
-  frc::DigitalOutput ultrasonic_trigger_pin_one{4};
-  double ultrasonic_sensor_range_one = 0.0;
-  double voltage_scale_factor = 1.0;
+  // // Ultrasonic Set Up
+  // frc::AnalogInput ultrasonic_sensor_one{0};
+  // frc::DigitalOutput ultrasonic_trigger_pin_one{4};
+  // double ultrasonic_sensor_range_one = 0.0;
+  // double voltage_scale_factor = 1.0;
 
   // Autonomous Variables
   int phase;

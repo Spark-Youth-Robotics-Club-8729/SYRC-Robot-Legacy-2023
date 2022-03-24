@@ -24,7 +24,7 @@ void Robot::RobotInit() {
   m_encoder2.SetDistancePerPulse((3.14159265358 * 6) / 360.0);
 
   // Ultrasonic 
-  ultrasonic_trigger_pin_one.Set(true);
+  // ultrasonic_trigger_pin_one.Set(true);
 
   //Default
   m_chooser.SetDefaultOption(kAutoNameDefault, kAutoNameDefault);
@@ -42,7 +42,7 @@ void Robot::AutonomousInit() {
 //Reset/Initializing Sensors
 m_encoder1.Reset();
 m_encoder2.Reset();
-ultrasonic_trigger_pin_one.Set(true);
+// ultrasonic_trigger_pin_one.Set(true);
 
 //Initializing Variables
 // currentRed = 0.0;
@@ -63,20 +63,20 @@ void Robot::AutonomousPeriodic()
 {
 
 //Colour Sensor Periodic
-frc::Color detectedColor = m_colorSensor.GetColor();  
-frc::SmartDashboard::PutNumber("Red", detectedColor.red);
-frc::SmartDashboard::PutNumber("Green", detectedColor.green);
-frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
+// frc::Color detectedColor = m_colorSensor.GetColor();  
+// frc::SmartDashboard::PutNumber("Red", detectedColor.red);
+// frc::SmartDashboard::PutNumber("Green", detectedColor.green);
+// frc::SmartDashboard::PutNumber("Blue", detectedColor.blue);
 frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
-currentRed = detectedColor.red;
-currentBlue = detectedColor.blue;
+// currentRed = detectedColor.red;
+// currentBlue = detectedColor.blue;
 
 
-//Ultrasonic Sensor Periodic
-double voltage_scale_factor = 5/frc::RobotController::GetVoltage5V();
-double  ultrasonic_sensor_range_one = ultrasonic_sensor_one.GetValue() * 0.0492 * voltage_scale_factor;
-frc::SmartDashboard::PutNumber("Sensor 1 Range", ultrasonic_sensor_range_one);
-frc::SmartDashboard::PutNumber("NAV sensor", (m_gyro.GetYaw()));
+// //Ultrasonic Sensor Periodic
+// double voltage_scale_factor = 5/frc::RobotController::GetVoltage5V();
+// double  ultrasonic_sensor_range_one = ultrasonic_sensor_one.GetValue() * 0.0492 * voltage_scale_factor;
+// frc::SmartDashboard::PutNumber("Sensor 1 Range", ultrasonic_sensor_range_one);
+// frc::SmartDashboard::PutNumber("NAV sensor", (m_gyro.GetYaw()));
 
 
 //Encoder Periodic
@@ -91,7 +91,7 @@ encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
 
 // Phase 2: Drive to edge of tarmac OR getting out of tarmac when reset happens
 if (phase == 0) {
-  if (cargo_Intake_Time < 150) {
+  if (cargo_Intake_Time < 200) {
     InnerClimberLateral.Set(0.90);
     cargo_Intake_Time++;
   }
@@ -101,78 +101,73 @@ if (phase == 0) {
   }
 }
 
-// if (phase == 1) {
+if (phase == 1) {
 
-//   if (encoderAverage > -61) {  // Driving until a high sense in colour, Depends on whether we are Red or Blue
+  if (encoderAverage > -61) {  // Driving until a high sense in colour, Depends on whether we are Red or Blue
     
-//     m_robotDrive.ArcadeDrive(0, 0.50); 
-//     intake.Set(-0.80);
-//   } 
+    m_robotDrive.ArcadeDrive(0, 0.40); 
+    intake.Set(-0.80);
+    InnerClimberLateral.Set(0.0);
+  } 
   
-//   else { //Reached Tarmac, onto phase 3
-//     m_encoder1.Reset();
-//     m_encoder2.Reset();
-//     encoderAverage=0;
-//     phase = 2;
+  else { //Reached Tarmac, onto phase 3
+    phase = 2;
+  }
 
-//   }
+}
+if (phase==2) {
+  if (cargo_Intake_Time < 50) {
+  cargo_Intake_Time++;
+  m_shooter.Set(0.65);
+  }
+  else {
+    phase=3;
+    cargo_Intake_Time=0;
+  }
+}
 
-// }
-// if (phase==2) {
-//   if (cargo_Intake_Time < 50) {
-//   cargo_Intake_Time++;
-//   m_shooter.Set(0.65);
-//   }
-//   else {
-//     phase=3;
-//     cargo_Intake_Time=0;
-//   }
-// }
+if (phase == 3) {
+  if (encoderAverage < -30) {
+    m_robotDrive.ArcadeDrive(0, -0.40);
+  }
+  else {
+    phase = 4;
+  }
+}
+if (phase == 4) {
+    intake.Set(0.0);
+    m_robotDrive.ArcadeDrive(0, 0);
+    phase = 5;
+    cargo_Intake_Time = 0;
+    cargo_Outtake_Time = 0;
 
-// if (phase == 3) {
-//   if (encoderAverage < -30) {
-//     m_robotDrive.ArcadeDrive(0, -0.50);
-//   }
-//   else {
-//     phase = 4;
-//   }
-// }
-// if (phase == 4) {
-//     intake.Set(0.0);
-//     m_robotDrive.ArcadeDrive(0, 0);
-//     phase = 5;
-//     cargo_Intake_Time = 0;
-//     cargo_Outtake_Time = 0;
-//     m_encoder1.Reset();
-//     m_encoder2.Reset(); // Back to phase 0
+  }
+if (phase==5) {
+  if (cargo_Outtake_Time <150) {
+    cargo_Outtake_Time++;
+    if (cargo_Outtake_Time < 50) {
+      m_storage.Set(-0.95);
+    }
+    if (50 < cargo_Outtake_Time < 100) {
+      m_storage.Set(0.0);
+    }
+    if (100 < cargo_Outtake_Time < 150) {
+      m_storage.Set(-0.95);
+    }
+  }
+  else {
+    phase=6;
+    m_shooter.Set(0.0);
+    m_storage.Set(0.0);
+    cargo_Outtake_Time=0;
+  }
+}
 
-//   }
-// if (phase==5) {
-//   if (cargo_Outtake_Time <150) {
-//     cargo_Outtake_Time++;
-//     if (cargo_Outtake_Time < 50) {
-//       m_storage.Set(-0.95);
-//     }
-//     if (50 < cargo_Outtake_Time < 100) {
-//       m_storage.Set(0.0);
-//     }
-//     if (100 < cargo_Outtake_Time < 150) {
-//       m_storage.Set(-0.95);
-//     }
-//   }
-//   else {
-//     phase=6;
-//     m_shooter.Set(0.0);
-//     m_storage.Set(0.0);
-//     cargo_Outtake_Time=0;
-//   }
-// }
-
-// if (phase==6) {
-//   if (encoderAverage > -61) {
-//     m_robotDrive.ArcadeDrive(0, 0.50);
-//   }
-// }
+if (phase==6) {
+  if (encoderAverage > -61) {
+    m_robotDrive.ArcadeDrive(0, 0.40);
+  }
+}
 //********************************************************************************************************************************
 
 
@@ -443,7 +438,7 @@ void Robot::TeleopInit() {
 
   m_encoder1.Reset();
   m_encoder2.Reset();
-  m_gyro.Reset();
+  // m_gyro.Reset();
 
 }
 
@@ -461,15 +456,15 @@ void Robot::TeleopPeriodic() {
 
 void Robot::Intake() {
 
-  if (m_xbox.GetRawButton(3)) {
+  if (m_xbox.GetRawButton(1)) {
     intake.Set(-0.80);
   }
 
-  if (m_xbox.GetRawButton(2)) {
+  if (m_xbox.GetRawButton(3)) {
     intake.Set(0.0);
   }
 
-  if (m_xbox.GetRawButton(7)) {
+  if (m_xbox.GetRawButton(9)) {
 
     intake.Set(0.80);
 
@@ -479,12 +474,12 @@ void Robot::Intake() {
 
 void Robot::Hanging1() { 
 
-InnerLeftClimber.Set(m_xbox.GetRawAxis(5)*0.75);
-InnerRightClimber.Set(m_xbox.GetRawAxis(5)*0.75);
-OuterLeftClimber.Set(m_xbox.GetRawAxis(1)*0.95);
-OuterRightClimber.Set(m_xbox.GetRawAxis(1)*0.95);
-InnerClimberLateral.Set(m_xbox.GetRawAxis(4)*-0.90);
-OuterClimberLateral.Set(m_xbox.GetRawAxis(0)*-0.90);
+InnerLeftClimber.Set(m_xbox.GetRawAxis(1)*0.75);
+InnerRightClimber.Set(m_xbox.GetRawAxis(1)*0.75);
+OuterLeftClimber.Set(m_xbox.GetRawAxis(3)*0.95);
+OuterRightClimber.Set(m_xbox.GetRawAxis(3)*0.95);
+InnerClimberLateral.Set(m_xbox.GetRawAxis(0)*0.90);
+OuterClimberLateral.Set(m_xbox.GetRawAxis(2)*0.90);
 
 // if (m_stick.GetRawButton(7)) {
 
@@ -499,7 +494,6 @@ OuterClimberLateral.Set(m_xbox.GetRawAxis(0)*-0.90);
 // OuterRightClimber.Set(0.4);
 
 // }
-
 
 }
 
@@ -533,7 +527,7 @@ void Robot::SmartDashboard() {
 
 
   //Gyro SmartDashboard
-  frc::SmartDashboard::PutNumber("NAV sensor", m_gyro.GetYaw());
+  // frc::SmartDashboard::PutNumber("NAV sensor", m_gyro.GetYaw());
 
   // //Ultrasonic SmartDashboard
   // double voltage_scale_factor = 5/frc::RobotController::GetVoltage5V();
@@ -550,15 +544,15 @@ void Robot::SmartDashboard() {
 
 void Robot::Storage() {
 
-  if (m_xbox.GetRawButton(5)) {
+  if (m_xbox.GetRawButton(6)) {
     m_storage.Set(-0.95); //0.45 //0.95
   } 
 
-  if (m_xbox.GetRawButton(6)) { 
+  if (m_xbox.GetRawButton(5)) { 
     m_storage.Set(-0.45); //0.45 //0.95
   }
   
-  if (m_xbox.GetRawButton(1)) {
+  if (m_xbox.GetRawButton(2)) {
     m_storage.Set(0.0);
   }
   }
@@ -566,20 +560,17 @@ void Robot::Storage() {
   // m_storage.Set(m_stick.GetRawAxis(3)*0.95);
 void Robot::Outtake() {
 
-  // if (m_xbox.GetRawButton(7)) {
-  //   m_shooter.Set(m_xbox.GetRawAxis(2)*0.65);
-  // }
-  m_shooter.Set(m_xbox.GetRawAxis(3)*0.60);
-  m_shooter.Set(m_xbox.GetRawAxis(2)*0.65);
+  if (m_xbox.GetRawButton(8)) {
+    m_shooter.Set(0.65); //0.45 //0.95
+  } 
 
+  if (m_xbox.GetRawButton(7)) { 
+    m_shooter.Set(0.60); //0.45 //0.95
+  }
+  
   if (m_xbox.GetRawButton(4)) {
     m_shooter.Set(0.0);
   }
-  //0.60//0.65 
-  // if (m_xbox.GetRawButton(8)) { 
-  //   m_shooter.Set(-0.0);
-  // }
-
 }
 
 void Robot::Camera() {}
