@@ -79,19 +79,6 @@ private:
   static const int EncoderPin2A = 2;
   static const int EncoderPin2B = 3;
 
-
-  // I2C Port
-  static constexpr auto i2cPort = frc::I2C::Port::kOnboard;
-
-  // // Colour Sensor
-  // rev::ColorSensorV3 m_colorSensor{i2cPort};
-  // rev::ColorMatch m_colorMatcher;
-  // float currentRed;
-  // float currentBlue;
-  
-  // //Gyro
-  // AHRS m_gyro{frc::SPI::Port::kMXP};
-
   //Joystick
   frc::Joystick m_xbox{ 0 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 0.
   frc::Joystick m_stick{ 1 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 1.
@@ -115,7 +102,6 @@ private:
   frc::MotorControllerGroup m_left{frontLeft, backLeft};
   frc::MotorControllerGroup m_right{frontRight, backRight};
   frc::DifferentialDrive m_robotDrive{m_left, m_right};
-  bool reverse = false;
 
   //Intake
   rev::CANSparkMax intake {intakeDeviceID, rev::CANSparkMax::MotorType::kBrushed};
@@ -128,8 +114,6 @@ private:
   double targetOffsetAngle_Horizontal = 0.0;
   double targetOffsetAngle_Vertical = 0.0;
   double targetArea = 0.0;
-  bool intaked = true;
-  const int Camera_Button = 9;
 
   //Encoder Set Up
   frc::Encoder m_encoder1{ EncoderPin1A, EncoderPin1B, true };
@@ -138,25 +122,10 @@ private:
   rev::SparkMaxRelativeEncoder m_ShooterEncoder = m_shooter.GetEncoder();
   rev::SparkMaxRelativeEncoder m_FeederEncoder = m_storage.GetEncoder();
 
-  //Ramp Time
-  int shoottime=0;
-  int intaketime=0;
-  int feedertime=0;
-
-  // // Ultrasonic Set Up
-  // frc::AnalogInput ultrasonic_sensor_one{0};
-  // frc::DigitalOutput ultrasonic_trigger_pin_one{4};
-  // double ultrasonic_sensor_range_one = 0.0;
-  // double voltage_scale_factor = 1.0;
-
   // Autonomous Variables
+  int time;
   int phase;
-  int phase4;
-  int phase3;
-  int cargo_Outtake_Time;
-  int cargo_Intake_Time;
-  bool reset;
-
+  
   //Teleop Periodic
   void Camera();
   void Intake();
