@@ -150,12 +150,17 @@ void Robot::Intake() {
 
 void Robot::Hanging1() { 
 
-InnerLeftClimber.Set(m_xbox.GetRawAxis(1)*0.75);
-InnerRightClimber.Set(m_xbox.GetRawAxis(1)*0.75);
 OuterLeftClimber.Set(m_xbox.GetRawAxis(3)*0.95);
 OuterRightClimber.Set(m_xbox.GetRawAxis(3)*0.95);
-InnerClimberLateral.Set(m_xbox.GetRawAxis(0)*0.90);
-OuterClimberLateral.Set(m_xbox.GetRawAxis(2)*0.90);
+if (m_xbox.GetRawButton(11)) {
+  InnerClimberLateral.Set(0.40);
+  OuterClimberLateral.Set(0.40);
+}
+
+if (m_xbox.GetRawButton(12)) {
+  InnerClimberLateral.Set(0.0);
+  OuterClimberLateral.Set(0.0);
+}
 
 }
 
@@ -192,8 +197,8 @@ void Robot::Storage() {
     m_storage.Set(-0.95); 
   } 
 
-  if (m_xbox.GetRawButton(5)) { 
-    m_storage.Set(-0.68); 
+  if (m_xbox.GetRawButton(8)) { 
+    m_storage.Set(-0.65); 
   }
   
   if (m_xbox.GetRawButton(2)) {
@@ -204,12 +209,12 @@ void Robot::Storage() {
 
 void Robot::Outtake() {
 
-  if (m_xbox.GetRawButton(8)) {
+  if (m_xbox.GetRawButton(5)) {
     m_shooter.Set(0.65); 
   } 
 
   if (m_xbox.GetRawButton(7)) { 
-    m_shooter.Set(0.30); 
+    m_shooter.Set(0.50); 
   }
 
   if (m_xbox.GetRawButton(4)) {

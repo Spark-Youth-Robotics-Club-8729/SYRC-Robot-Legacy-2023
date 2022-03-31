@@ -5,6 +5,7 @@
 #pragma once
 
 //Libraries
+#include "AHRS.h"
 #include <string>
 #include <frc/Joystick.h>
 #include <frc/TimedRobot.h>
@@ -63,8 +64,6 @@ private:
   static const int rightLeadDeviceID = 5;
   static const int leftBackDeviceID = 6;
   static const int rightBackDeviceID = 7;
-  static const int Hanger1ID = 8; 
-  static const int Hanger2ID = 9; 
   static const int Hanger3ID = 10; 
   static const int Hanger4ID = 11;
   static const int Hanger5ID = 12;
@@ -85,8 +84,6 @@ private:
   frc::Joystick m_test1{ 3 }; //MAKE SURE IN DRIVERSTATION CONTROLLER IS ON 3.
 
   //Hanging
-  WPI_VictorSPX InnerLeftClimber = {Hanger1ID};
-  WPI_VictorSPX InnerRightClimber = {Hanger2ID};
   WPI_VictorSPX OuterLeftClimber = {Hanger3ID};
   WPI_VictorSPX OuterRightClimber = {Hanger4ID};
   WPI_VictorSPX InnerClimberLateral = {Hanger5ID};
