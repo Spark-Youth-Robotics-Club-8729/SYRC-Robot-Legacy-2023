@@ -193,7 +193,7 @@ void Robot::Storage() {
   } 
 
   if (m_xbox.GetRawButton(5)) { 
-    m_storage.Set(-0.65); 
+    m_storage.Set(-0.68); 
   }
   
   if (m_xbox.GetRawButton(2)) {
@@ -209,7 +209,7 @@ void Robot::Outtake() {
   } 
 
   if (m_xbox.GetRawButton(7)) { 
-    m_shooter.Set(0.50); 
+    m_shooter.Set(0.30); 
   }
 
   if (m_xbox.GetRawButton(4)) {
