@@ -44,7 +44,7 @@ fmt::print("Auto selected: {}\n", m_autoSelected);
 m_encoder1.Reset();
 m_encoder2.Reset();
 
-phase=1;
+phase=0;
 encoderAverage=0.0;
 
 }
@@ -56,61 +56,93 @@ void Robot::AutonomousPeriodic()
 
 frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
 frc::SmartDashboard::PutNumber("Encoder 1: ", (m_encoder1.GetDistance()));
+std::shared_ptr table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+targetOffsetAngle_Horizontal = table->GetNumber("tx",0.0);
+targetOffsetAngle_Vertical = table->GetNumber("ty",0.0);
+targetArea = table->GetNumber("ta",0.0);
 
 //Encoder Periodic
 encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
 
-if (phase == 1) {
-  if (time < 100) { 
-    m_robotDrive.ArcadeDrive(0, 0.55); 
+  if (phase == 0) {
+    if ( time < 50) {
     intake.Set(-0.80);
     time++;
-  } 
-  else { 
-    phase = 2;
-    time=0;
+    }
+    else {
+      phase = 1;
+      time = 0;
+    }
+  }
+  if (phase == 1) {
+    if (time < 100) { 
+      m_robotDrive.ArcadeDrive(0, 0.55); 
+      intake.Set(-0.80);
+      time++;
+    } 
+    else { 
+      phase = 2;
+      time=0;
+    }
+  }
+  if (phase==2) {
+    if (time < 50) {
+      m_shooter.Set(0.67);
+      time++;
+    }
+    else {
+      phase=3;
+      time=0;
+    }
   }
 
-}
-if (phase==2) {
-  if (time < 50) {
-  m_shooter.Set(0.67);
-  time++;
+  if (phase == 3) {
+    if (time < 50) {
+      m_robotDrive.ArcadeDrive(0, -0.55);
+      time++;
+    }
+    else {
+      phase = 4;
+      time=0;
+    }
   }
-  else {
-    phase=3;
-    time=0;
-  }
-}
-
-if (phase == 3) {
-  if (time < 50) {
-    m_robotDrive.ArcadeDrive(0, -0.55);
-    time++;
-  }
-  else {
-    phase = 4;
-    time=0;
-  }
-}
-if (phase == 4) {
+  if (phase == 4) {
     intake.Set(0.0);
     m_robotDrive.ArcadeDrive(0, 0);
     if (time < 150) {
       time++;
-    if (time > 50) {
-    m_storage.Set(-0.95);
+      if (time > 50) {
+        m_storage.Set(-0.95);
+      }
+    }
+    else {
+      phase=5;
+      m_shooter.Set(0.0);
+      m_storage.Set(0.0);
+      time=0;
     }
   }
-  else {
-    phase=5;
-    m_shooter.Set(0.0);
-    m_storage.Set(0.0);
-    time=0;
+  if (phase == 5) {
+      if (time < 50) {
+        m_robotDrive.ArcadeDrive(0.4, 0);
+        time++;
+      }
+      else {
+        time=0;
+        phase=7;
+      }
   }
+  if (phase == 6) {
+    if (time < 200) {
+        m_robotDrive.ArcadeDrive(0, 0.55);
+        time++;
+    }
+    else {
+        time=0;
+        phase=7;
+    }
+  } 
 }
-}
-
 void Robot::TeleopInit() {
 
   m_encoder1.Reset();
@@ -150,8 +182,14 @@ void Robot::Intake() {
 
 void Robot::Hanging1() { 
 
-OuterLeftClimber.Set(m_xbox.GetRawAxis(3)*0.95);
-OuterRightClimber.Set(m_xbox.GetRawAxis(3)*0.95);
+OuterLeftClimber.Set(m_xbox.GetRawAxis(1)*0.95);
+OuterRightClimber.Set(m_xbox.GetRawAxis(1)*0.95);
+
+if (m_xbox.GetRawButton(10)) {
+  InnerClimberLateral.Set(-0.40);
+  OuterClimberLateral.Set(-0.40);
+}
+
 if (m_xbox.GetRawButton(11)) {
   InnerClimberLateral.Set(0.40);
   OuterClimberLateral.Set(0.40);
@@ -223,7 +261,22 @@ void Robot::Outtake() {
 
 }
 
-void Robot::Camera() {}
+void Robot::Camera() {
+    // if (targetOffsetAngle_Horizontal < -4) {
+    //   m_robotDrive.ArcadeDrive(-0.4,0);
+    // }
+    // if (targetOffsetAngle_Horizontal > 4) {
+    //   m_robotDrive.ArcadeDrive(0.4,0);
+    // }
+    // if (-4<=targetOffsetAngle_Horizontal<=4) {
+    //   if (targetOffsetAngle_Vertical > -20) {
+    //     m_robotDrive.ArcadeDrive(0, -0.4);
+    //   }
+    //   else {
+    //     m_robotDrive.ArcadeDrive(0, 0);
+    //   }
+    // }
+}
 
 void Robot::DisabledInit() {}
 
