@@ -63,10 +63,10 @@ targetArea = table->GetNumber("ta",0.0);
 
 //Encoder Periodic
 encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
-
+if (m_autoSelected == kAutoNameDefault) {
   if (phase == 0) {
     if ( time < 50) {
-    intake.Set(-0.80);
+    // intake.Set(0.90);
     time++;
     }
     else {
@@ -75,9 +75,8 @@ encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
     }
   }
   if (phase == 1) {
-    if (time < 100) { 
+    if (time < 115) { 
       m_robotDrive.ArcadeDrive(0, 0.55); 
-      intake.Set(-0.80);
       time++;
     } 
     else { 
@@ -87,7 +86,7 @@ encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
   }
   if (phase==2) {
     if (time < 50) {
-      m_shooter.Set(0.67);
+      m_shooter.Set(0.575);
       time++;
     }
     else {
@@ -107,7 +106,7 @@ encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
     }
   }
   if (phase == 4) {
-    intake.Set(0.0);
+    // intake.Set(0.0);
     m_robotDrive.ArcadeDrive(0, 0);
     if (time < 150) {
       time++;
@@ -122,26 +121,27 @@ encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
       time=0;
     }
   }
-  if (phase == 5) {
-      if (time < 50) {
-        m_robotDrive.ArcadeDrive(0.4, 0);
-        time++;
-      }
-      else {
-        time=0;
-        phase=7;
-      }
-  }
-  if (phase == 6) {
-    if (time < 200) {
-        m_robotDrive.ArcadeDrive(0, 0.55);
-        time++;
-    }
-    else {
-        time=0;
-        phase=7;
-    }
-  } 
+}
+  // if (phase == 7) {
+  //     if (time < 50) {
+  //       m_robotDrive.ArcadeDrive(0.4, 0);
+  //       time++;
+  //     }
+  //     else {
+  //       time=0;
+  //       phase=7;
+  //     }
+  // }
+  // if (phase == 8) {
+  //   if (time < 200) {
+  //       m_robotDrive.ArcadeDrive(0, 0.55);
+  //       time++;
+  //   }
+  //   else {
+  //       time=0;
+  //       phase=7;
+  //   }
+  // } 
 }
 void Robot::TeleopInit() {
 
@@ -164,19 +164,19 @@ void Robot::TeleopPeriodic() {
 
 void Robot::Intake() {
 
-  if (m_xbox.GetRawButton(1)) {
-    intake.Set(-0.80);
-  }
+  // if (m_xbox.GetRawButton(1)) {
+  //   intake.Set(0.90);
+  // }
 
-  if (m_xbox.GetRawButton(3)) {
-    intake.Set(0.0);
-  }
+  // if (m_xbox.GetRawButton(3)) {
+  //   intake.Set(0.0);
+  // }
 
-  if (m_xbox.GetRawButton(9)) {
+  // if (m_xbox.GetRawButton(9)) {
 
-    intake.Set(0.80);
+  //   intake.Set(-0.80);
 
-  }
+  // }
 
 }
 
@@ -200,6 +200,44 @@ if (m_xbox.GetRawButton(12)) {
   OuterClimberLateral.Set(0.0);
 }
 
+if (m_test.GetRawButton(1)) {
+OuterLeftClimber.Set(0.95);
+}
+
+if (m_test.GetRawButton(2)) {
+OuterLeftClimber.Set(-0.95);
+}
+
+if (m_test.GetRawButton(3)) {
+OuterRightClimber.Set(0.95);
+}
+
+if (m_test.GetRawButton(4)) {
+OuterRightClimber.Set(-0.95);
+}
+
+if (m_test.GetRawButton(5)) {
+  InnerClimberLateral.Set(0.40);
+}
+
+if (m_test.GetRawButton(6)) {
+  InnerClimberLateral.Set(-0.40);
+}
+
+if (m_test.GetRawButton(7)) {
+  OuterClimberLateral.Set(0.40);
+}
+
+if (m_test.GetRawButton(8)) {
+  OuterClimberLateral.Set(-0.40);
+}
+
+if (m_test.GetRawButton(12)) {
+  OuterLeftClimber.Set(0.0);
+  OuterRightClimber.Set(0.0);
+  InnerClimberLateral.Set(0.0);
+  OuterClimberLateral.Set(0.0);
+}
 }
 
 void Robot::Movement() {
@@ -248,7 +286,7 @@ void Robot::Storage() {
 void Robot::Outtake() {
 
   if (m_xbox.GetRawButton(5)) {
-    m_shooter.Set(0.65); 
+    m_shooter.Set(0.575); //65
   } 
 
   if (m_xbox.GetRawButton(7)) { 
@@ -262,12 +300,17 @@ void Robot::Outtake() {
 }
 
 void Robot::Camera() {
-    // if (targetOffsetAngle_Horizontal < -4) {
-    //   m_robotDrive.ArcadeDrive(-0.4,0);
-    // }
-    // if (targetOffsetAngle_Horizontal > 4) {
-    //   m_robotDrive.ArcadeDrive(0.4,0);
-    // }
+  if (m_stick.GetRawButton(5)){
+    if (targetOffsetAngle_Horizontal < -3) {
+      m_robotDrive.ArcadeDrive(-0.6,0);
+    }
+    if (targetOffsetAngle_Horizontal > 3) {
+      m_robotDrive.ArcadeDrive(0.6,0);
+    }
+  }
+  if (m_stick.GetRawButton(6)) {
+    m_robotDrive.ArcadeDrive(0, 0);
+  }
     // if (-4<=targetOffsetAngle_Horizontal<=4) {
     //   if (targetOffsetAngle_Vertical > -20) {
     //     m_robotDrive.ArcadeDrive(0, -0.4);
