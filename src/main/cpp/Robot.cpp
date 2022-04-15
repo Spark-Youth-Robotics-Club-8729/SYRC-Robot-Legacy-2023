@@ -54,94 +54,132 @@ void Robot::AutonomousPeriodic()
 
 {
 
-frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
-frc::SmartDashboard::PutNumber("Encoder 1: ", (m_encoder1.GetDistance()));
-std::shared_ptr table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
-targetOffsetAngle_Horizontal = table->GetNumber("tx",0.0);
-targetOffsetAngle_Vertical = table->GetNumber("ty",0.0);
-targetArea = table->GetNumber("ta",0.0);
+  // frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
+  // frc::SmartDashboard::PutNumber("Encoder 1: ", (m_encoder1.GetDistance()));
+  // std::shared_ptr table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
+  // targetOffsetAngle_Horizontal = table->GetNumber("tx",0.0);
+  // targetOffsetAngle_Vertical = table->GetNumber("ty",0.0);
+  // targetArea = table->GetNumber("ta",0.0);
 
-//Encoder Periodic
-encoderAverage = (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2;
-if (m_autoSelected == kAutoNameDefault) {
-  if (phase == 0) {
-    if ( time < 50) {
-    // intake.Set(0.90);
-    time++;
-    }
-    else {
-      phase = 1;
-      time = 0;
-    }
-  }
-  if (phase == 1) {
-    if (time < 115) { 
-      m_robotDrive.ArcadeDrive(0, 0.55); 
+  if (m_autoSelected == kAutoNameDefault) {
+    if (phase == 0) {
+      if ( time < 50) {
+      intake.Set(0.90);
       time++;
-    } 
-    else { 
-      phase = 2;
-      time=0;
-    }
-  }
-  if (phase==2) {
-    if (time < 50) {
-      m_shooter.Set(0.575);
-      time++;
-    }
-    else {
-      phase=3;
-      time=0;
-    }
-  }
-
-  if (phase == 3) {
-    if (time < 50) {
-      m_robotDrive.ArcadeDrive(0, -0.55);
-      time++;
-    }
-    else {
-      phase = 4;
-      time=0;
-    }
-  }
-  if (phase == 4) {
-    // intake.Set(0.0);
-    m_robotDrive.ArcadeDrive(0, 0);
-    if (time < 150) {
-      time++;
-      if (time > 50) {
-        m_storage.Set(-0.95);
+      }
+      else {
+        phase = 1;
+        time = 0;
       }
     }
-    else {
-      phase=5;
-      m_shooter.Set(0.0);
-      m_storage.Set(0.0);
-      time=0;
+    if (phase == 1) {
+      if (time < 115) { 
+        m_robotDrive.ArcadeDrive(0, 0.55); 
+        time++;
+      } 
+      else { 
+        phase = 2;
+        time=0;
+      }
+    }
+    if (phase==2) {
+      if (time < 50) {
+        m_shooter.Set(0.575);
+        time++;
+      }
+      else {
+        phase=3;
+        time=0;
+      }
+    }
+
+    if (phase == 3) {
+      if (time < 65) {
+        m_robotDrive.ArcadeDrive(0, -0.55);
+        time++;
+      }
+      else {
+        phase = 4;
+        time=0;
+      }
+    }
+    if (phase == 4) {
+      intake.Set(0.0);
+      m_robotDrive.ArcadeDrive(0, 0);
+      if (time < 150) {
+        time++;
+        if (time > 50) {
+          m_storage.Set(-0.95);
+        }
+      }
+      else {
+        phase=5;
+        m_shooter.Set(0.0);
+        m_storage.Set(0.0);
+        time=0;
+      }
     }
   }
-}
-  // if (phase == 7) {
-  //     if (time < 50) {
-  //       m_robotDrive.ArcadeDrive(0.4, 0);
-  //       time++;
-  //     }
-  //     else {
-  //       time=0;
-  //       phase=7;
-  //     }
-  // }
-  // if (phase == 8) {
-  //   if (time < 200) {
-  //       m_robotDrive.ArcadeDrive(0, 0.55);
-  //       time++;
-  //   }
-  //   else {
-  //       time=0;
-  //       phase=7;
-  //   }
-  // } 
+  
+  if (m_autoSelected == kAutoNameCustom1) {
+    if (phase == 0) {
+      if ( time < 50) {
+      intake.Set(0.90);
+      time++;
+      }
+      else {
+        phase = 1;
+        time = 0;
+      }
+    }
+    if (phase == 1) {
+      if (time < 65) { 
+        m_robotDrive.ArcadeDrive(0, 0.55); 
+        time++;
+      } 
+      else { 
+        phase = 2;
+        time=0;
+      }
+    }
+    if (phase==2) {
+      if (time < 70) {
+        m_shooter.Set(0.575);
+        time++;
+      }
+      else {
+        phase=3;
+        time=0;
+      }
+    }
+
+    if (phase == 3) {
+      if (time < 20) {
+        m_robotDrive.ArcadeDrive(0, -0.55);
+        time++;
+      }
+      else {
+        phase = 4;
+        time=0;
+      }
+    }
+    if (phase == 4) {
+      intake.Set(0.0);
+      m_robotDrive.ArcadeDrive(0, 0);
+      if (time < 150) {
+        time++;
+        if (time > 50) {
+          m_storage.Set(-0.95);
+        }
+      }
+      else {
+        phase=5;
+        m_shooter.Set(0.0);
+        m_storage.Set(0.0);
+        time=0;
+      }
+    }
+  }
 }
 void Robot::TeleopInit() {
 
@@ -164,19 +202,19 @@ void Robot::TeleopPeriodic() {
 
 void Robot::Intake() {
 
-  // if (m_xbox.GetRawButton(1)) {
-  //   intake.Set(0.90);
-  // }
+  if (m_xbox.GetRawButton(1)) {
+    intake.Set(0.90);
+  }
 
-  // if (m_xbox.GetRawButton(3)) {
-  //   intake.Set(0.0);
-  // }
+  if (m_xbox.GetRawButton(3)) {
+    intake.Set(0.0);
+  }
 
-  // if (m_xbox.GetRawButton(9)) {
+  if (m_xbox.GetRawButton(9)) {
 
-  //   intake.Set(-0.80);
+    intake.Set(-0.90);
 
-  // }
+  }
 
 }
 
@@ -250,14 +288,13 @@ void Robot::Movement() {
 
 void Robot::SmartDashboard() {
 
-  // Encoder SmartDashboard
-  frc::SmartDashboard::PutNumber("Encoder 1 Distance: ", m_encoder1.GetDistance());
-  frc::SmartDashboard::PutNumber("Encoder 2 Distance: ", m_encoder2.GetDistance());
-  frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
-  frc::SmartDashboard::PutNumber("Shooter RPM", m_ShooterEncoder.GetVelocity());
-  frc::SmartDashboard::PutNumber("Shooter Speed", m_shooter.Get());
-  frc::SmartDashboard::PutNumber("Feeder RPM", m_FeederEncoder.GetVelocity());
-  frc::SmartDashboard::PutNumber("Feeder Speed", m_storage.Get());
+  // frc::SmartDashboard::PutNumber("Encoder 1 Distance: ", m_encoder1.GetDistance());
+  // frc::SmartDashboard::PutNumber("Encoder 2 Distance: ", m_encoder2.GetDistance());
+  // frc::SmartDashboard::PutNumber("Robot Displacement: ", (m_encoder1.GetDistance() + m_encoder2.GetDistance())/2);
+  // frc::SmartDashboard::PutNumber("Shooter RPM", m_ShooterEncoder.GetVelocity());
+  // frc::SmartDashboard::PutNumber("Shooter Speed", m_shooter.Get());
+  // frc::SmartDashboard::PutNumber("Feeder RPM", m_FeederEncoder.GetVelocity());
+  // frc::SmartDashboard::PutNumber("Feeder Speed", m_storage.Get());
 
   //Limelight
   std::shared_ptr table = nt::NetworkTableInstance::GetDefault().GetTable("limelight");
@@ -302,23 +339,16 @@ void Robot::Outtake() {
 void Robot::Camera() {
   if (m_stick.GetRawButton(5)){
     if (targetOffsetAngle_Horizontal < -3) {
-      m_robotDrive.ArcadeDrive(-0.6,0);
+      m_robotDrive.ArcadeDrive(-0.50,0);
     }
     if (targetOffsetAngle_Horizontal > 3) {
-      m_robotDrive.ArcadeDrive(0.6,0);
+      m_robotDrive.ArcadeDrive(0.50,0);
     }
   }
   if (m_stick.GetRawButton(6)) {
     m_robotDrive.ArcadeDrive(0, 0);
   }
-    // if (-4<=targetOffsetAngle_Horizontal<=4) {
-    //   if (targetOffsetAngle_Vertical > -20) {
-    //     m_robotDrive.ArcadeDrive(0, -0.4);
-    //   }
-    //   else {
-    //     m_robotDrive.ArcadeDrive(0, 0);
-    //   }
-    // }
+
 }
 
 void Robot::DisabledInit() {}

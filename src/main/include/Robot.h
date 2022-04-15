@@ -133,8 +133,8 @@ private:
 
   //Default
   frc::SendableChooser<std::string> m_chooser;
-  const std::string kAutoNameDefault = "Route1/2";
-  const std::string kAutoNameCustom1 = "Route3";
-  const std::string kAutoNameCustom2 = "Route4";
+  const std::string kAutoNameDefault = "2 ball auto";
+  const std::string kAutoNameCustom1 = "2 ball auto SIDE";
+  const std::string kAutoNameCustom2 = "Do nothing";
   std::string m_autoSelected;
 };
