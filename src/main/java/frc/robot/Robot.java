@@ -41,12 +41,12 @@ public class Robot extends TimedRobot {
   boolean toggle = false;
   boolean up = false;
   int autoCounter=0;
-  final double kp=0.05;
-  final double ki=0.05;
+  final double kp=0.01;
+  final double ki=0.00;
   final double iLimit = 2;
-  final double kd=0.02;
+  final double kd=0.00;
   double dt = 0.0;
-  final double setpoint = 0.0;
+  double setpoint = 116.0;
   double sensorposition = 0.0;
   double error = 0.0;
   double errorSum = 0.0;
@@ -54,6 +54,9 @@ public class Robot extends TimedRobot {
   double lasterror = 0.0;
   double lastTimestamp = 0.0;
   double lastpitch = 0.0;
+  boolean mid = false;
+  double slowdrive = 1.0;
+  double slowturn = 1.0;
   private static final String kDefaultAuto = "Cube + Engage";
   private static final String kCustomAuto = "Cube + Mobility";
   private String m_autoSelected;
@@ -173,7 +176,7 @@ public class Robot extends TimedRobot {
           }
         }
         if (autoCounter==2) {
-          if (timer.get() < 0.2) {
+          if (timer.get() < 0.1) {
             m_elevator.set(0.3);
           }
           else {
@@ -184,7 +187,7 @@ public class Robot extends TimedRobot {
         }
         if (autoCounter==3) {
           if (timer.get() < 2.7) {
-            ROTATION.set(0.6);
+            ROTATION.set(0.7);
           }
           else {
             ROTATION.set(0.0);
@@ -213,8 +216,8 @@ public class Robot extends TimedRobot {
           }
         }
         if (autoCounter==6) {
-          if (timer.get() < 3) {
-            m_elevator.set(0.8);
+          if (timer.get() < 1.4) {
+            m_elevator.set(0.7);
           }
           else {
             m_elevator.set(0.0);
@@ -228,6 +231,16 @@ public class Robot extends TimedRobot {
           }
           else if (encoderA.getDistance() < 2800) {
             ROBOT_DRIVE.arcadeDrive(0.55, 0.0);
+          }
+          else {
+            ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
+            autoCounter++;
+            encoderA.reset();
+          }
+        }
+        if (autoCounter==8) {
+          if (encoderA.getDistance() < 430) {
+            ROBOT_DRIVE.arcadeDrive(0.0, 0.5);
           }
           else {
             ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
@@ -262,7 +275,7 @@ public class Robot extends TimedRobot {
           }
         }
         if (autoCounter==2) {
-          if (timer.get() < 0.2) {
+          if (timer.get() < 0.1) {
             m_elevator.set(0.3);
           }
           else {
@@ -273,7 +286,7 @@ public class Robot extends TimedRobot {
         }
         if (autoCounter==3) {
           if (timer.get() < 2.7) {
-            ROTATION.set(0.6);
+            ROTATION.set(0.7);
           }
           else {
             ROTATION.set(0.0);
@@ -302,8 +315,8 @@ public class Robot extends TimedRobot {
           }
         }
         if (autoCounter==6) {
-          if (timer.get() < 2) {
-            m_elevator.set(0.9);
+          if (timer.get() < 1.4) {
+            m_elevator.set(0.7);
           }
           else {
             m_elevator.set(0.0);
@@ -315,7 +328,7 @@ public class Robot extends TimedRobot {
           if (timer.get() < 3) {
             ROBOT_DRIVE.arcadeDrive(0.6, 0.0);
           }
-          else if (encoderA.getDistance() < 1240) {
+          else if (encoderA.getDistance() < 1210) { //1240
             ROBOT_DRIVE.arcadeDrive(0.65, 0.0);
           }
           else {
@@ -412,7 +425,6 @@ public class Robot extends TimedRobot {
     INTAKE.set(0.0);
     m_elevator.set(0.0);
     ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
-    m_elevatorEncoder.setPosition(0.0);
     timer.reset();
   }
 
@@ -440,20 +452,128 @@ public class Robot extends TimedRobot {
       INTAKE.set(-0.2);
     }
 
-    toggle = toplimitswitch.get();
+    // toggle = toplimitswitch.get();
 
+    // if (JOYSTICK2.getRawButton(1)) {
+    //   m_elevatorEncoder.setPosition(0.0);
+    //   mid = true;
+    // }
+
+    // if (mid) {
+    //   sensorposition = -m_elevatorEncoder.getPosition();
+    //   error = setpoint-sensorposition;
+    //   dt = Timer.getFPGATimestamp() - lastTimestamp;
+    //   if (Math.abs(error) < iLimit) {
+    //     errorSum += error*dt;
+    //   }
+  
+    //   errorRate = (error - lasterror) / dt;
+  
+    //   lastTimestamp = Timer.getFPGATimestamp();
+    //   lasterror = error;
+      
+    //   m_elevator.set(-kp*error);
+    //   if (error < 5) {
+    //     mid = false;
+    //     m_elevator.set(0.0);
+    //   }
+    // }
+    // SmartDashboard.putNumber("error", error);
+    // if (JOYSTICK2.getRawButtonPressed(4) && up == false) {
+    //   if (toggle) {
+    //     timer.reset();
+    //     timer.start();
+    //     if (timer.get() < 0.3) {
+    //       m_elevator.set(0.2);
+    //     }
+    //     System.out.println("Yes");
+    //     up = false;
+    //   }
+    //   else {
+    //     m_elevator.set(-0.8);
+    //     System.out.println("no");
+    //     up = true;
+    //   }
+    // }
+    // if (up) {
+    //   if (toggle) {
+    //     m_elevator.set(0.0);
+    //     timer.reset();
+    //     timer.start();
+    //     if (timer.get() < 0.3) {
+    //       m_elevator.set(0.2);
+    //     }
+    //     up = false;
+    //   }
+    // }
+
+    // if (JOYSTICK2.getRawButtonReleased(4)) {
+    //   m_elevator.set(0.0);
+    //   up = false;
+    // }
+
+    // if (JOYSTICK2.getRawButtonPressed(2)) {
+    //   System.out.println("goofy");
+    //   m_elevator.set(0.8);
+    // }
+    // if (JOYSTICK2.getRawButtonReleased(2)) {
+    //   m_elevator.set(0.0);
+    // }
+
+
+
+
+
+
+
+    toggle = toplimitswitch.get();
+    
+    if (toplimitswitch.get()) {
+      m_elevatorEncoder.setPosition(-219);
+    }
+    if (JOYSTICK2.getRawButton(1)) {
+      m_elevatorEncoder.setPosition(0.0);
+      mid = true;
+    }
+
+    if (mid) {
+      sensorposition = -m_elevatorEncoder.getPosition();
+      error = setpoint-sensorposition;
+      dt = Timer.getFPGATimestamp() - lastTimestamp;
+      if (Math.abs(error) < iLimit) {
+        errorSum += error*dt;
+      }
+  
+      errorRate = (error - lasterror) / dt;
+  
+      lastTimestamp = Timer.getFPGATimestamp();
+      lasterror = error;
+      
+      // m_elevator.set(-kp*error);
+      m_rightElevator.set(-kp*error);
+      m_leftElevator.set(-kp*error*0.333333333333333333333333333);
+      if (error < 5) {
+        mid = false;
+        m_elevator.set(0.0);
+      }
+    }
+    SmartDashboard.putNumber("error", error);
     if (JOYSTICK2.getRawButtonPressed(4) && up == false) {
       if (toggle) {
         timer.reset();
         timer.start();
         if (timer.get() < 0.3) {
-          m_elevator.set(0.2);
+          // m_elevator.set(0.2);
+          m_rightElevator.set(0.3);
+          m_leftElevator.set(0.3*0.3333333333333333333333333333333333);
         }
         System.out.println("Yes");
         up = false;
       }
       else {
-        m_elevator.set(-0.8);
+        // m_elevator.set(-0.8);
+        m_rightElevator.set(-0.9);
+        m_leftElevator.set(-0.9*0.3333333333333333333333333333333333333333);
         System.out.println("no");
         up = true;
       }
@@ -464,7 +584,9 @@ public class Robot extends TimedRobot {
         timer.reset();
         timer.start();
         if (timer.get() < 0.3) {
-          m_elevator.set(0.2);
+          // m_elevator.set(0.2);
+          m_rightElevator.set(0.3);
+          m_leftElevator.set(0.3*0.3333333333333333333333333333333333);
         }
         up = false;
       }
@@ -477,7 +599,10 @@ public class Robot extends TimedRobot {
 
     if (JOYSTICK2.getRawButtonPressed(2)) {
       System.out.println("goofy");
-      m_elevator.set(0.8);
+      // m_elevator.set(0.8);
+      m_rightElevator.set(0.7);
+      m_leftElevator.set(0.7*0.3333333333333333333333333333333333333);
+
     }
     if (JOYSTICK2.getRawButtonReleased(2)) {
       m_elevator.set(0.0);
@@ -498,7 +623,16 @@ public class Robot extends TimedRobot {
     if (JOYSTICK2.getRawButton(3)) {
       INTAKE.set(0.0);
     }
-    ROBOT_DRIVE.arcadeDrive(JOYSTICK.getRawAxis(1), -JOYSTICK.getRawAxis(4)*0.7);
+    
+    if (JOYSTICK.getRawButton(1)) {
+      slowdrive = 0.50;
+      slowturn = 0.80;
+    }
+    if (JOYSTICK.getRawButton(2)) {
+      slowdrive = 1.0;
+      slowturn = 1.0;
+    }
+    ROBOT_DRIVE.arcadeDrive(JOYSTICK.getRawAxis(1)*slowdrive, -JOYSTICK.getRawAxis(4)*0.7*slowturn);
     // if (JOYSTICK.getRawButton(1)) {
     //   gyroEngage(gyro);
     // //   // if (gyro.getPitch() < -4) {
@@ -531,19 +665,84 @@ public class Robot extends TimedRobot {
   @Override
   public void testPeriodic() {
     // ROBOT_DRIVE.arcadeDrive(gyroEngage(gyro), 0.0);
-    if (autoCounter==0) {
-      if (timer.get() < 3) {
-        ROBOT_DRIVE.arcadeDrive(0.6, 0.0);
+    toggle = toplimitswitch.get();
+
+    if (JOYSTICK2.getRawButton(1)) {
+      m_elevatorEncoder.setPosition(0.0);
+      mid = true;
+    }
+
+    if (mid) {
+      sensorposition = -m_elevatorEncoder.getPosition();
+      error = setpoint-sensorposition;
+      dt = Timer.getFPGATimestamp() - lastTimestamp;
+      if (Math.abs(error) < iLimit) {
+        errorSum += error*dt;
       }
-      else if (encoderA.getDistance() < 1300) {
-        ROBOT_DRIVE.arcadeDrive(0.55, 0.0);
-      }
-      else {
-        ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
+  
+      errorRate = (error - lasterror) / dt;
+  
+      lastTimestamp = Timer.getFPGATimestamp();
+      lasterror = error;
+      
+      // m_elevator.set(-kp*error);
+      m_rightElevator.set(-kp*error);
+      m_leftElevator.set(-kp*error*0.333333333333333333333333333);
+      if (error < 5) {
+        mid = false;
+        m_elevator.set(0.0);
       }
     }
-    SmartDashboard.putNumber("Encoder A", encoderA.getDistance());
-    SmartDashboard.putNumber("Encoder B", encoderB.getDistance());
+    SmartDashboard.putNumber("error", error);
+    if (JOYSTICK2.getRawButtonPressed(4) && up == false) {
+      if (toggle) {
+        timer.reset();
+        timer.start();
+        if (timer.get() < 0.3) {
+          // m_elevator.set(0.2);
+          m_rightElevator.set(0.2);
+          m_leftElevator.set(0.2*0.3333333333333333333333333333333333);
+        }
+        System.out.println("Yes");
+        up = false;
+      }
+      else {
+        // m_elevator.set(-0.8);
+        m_rightElevator.set(-0.8);
+        m_leftElevator.set(-0.8*0.3333333333333333333333333333333333333333);
+        System.out.println("no");
+        up = true;
+      }
+    }
+    if (up) {
+      if (toggle) {
+        m_elevator.set(0.0);
+        timer.reset();
+        timer.start();
+        if (timer.get() < 0.3) {
+          // m_elevator.set(0.2);
+          m_rightElevator.set(0.2);
+          m_leftElevator.set(0.2*0.3333333333333333333333333333333333);
+        }
+        up = false;
+      }
+    }
+
+    if (JOYSTICK2.getRawButtonReleased(4)) {
+      m_elevator.set(0.0);
+      up = false;
+    }
+
+    if (JOYSTICK2.getRawButtonPressed(2)) {
+      System.out.println("goofy");
+      // m_elevator.set(0.8);
+      m_rightElevator.set(0.8);
+      m_leftElevator.set(0.8*0.3333333333333333333333333333333333333);
+
+    }
+    if (JOYSTICK2.getRawButtonReleased(2)) {
+      m_elevator.set(0.0);
+    }
 
   }
 
