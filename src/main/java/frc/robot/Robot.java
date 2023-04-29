@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.cameraserver.CameraServer;
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.Joystick;
@@ -23,6 +24,9 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_VictorSPX;
 import com.ctre.phoenix.platform.can.AutocacheState;
 import com.kauailabs.navx.frc.AHRS;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 
 /**
  * The VM is configured to automatically run this class, and to call the functions corresponding to
@@ -40,13 +44,13 @@ public class Robot extends TimedRobot {
   double levelDegree=6.0;
   boolean toggle = false;
   boolean up = false;
+  boolean down = false;
   int autoCounter=0;
   final double kp=0.01;
   final double ki=0.00;
   final double iLimit = 2;
   final double kd=0.00;
   double dt = 0.0;
-  double setpoint = 116.0;
   double sensorposition = 0.0;
   double error = 0.0;
   double errorSum = 0.0;
@@ -57,12 +61,24 @@ public class Robot extends TimedRobot {
   boolean mid = false;
   double slowdrive = 1.0;
   double slowturn = 1.0;
+  double high = -219;
+  double middle = -116;
+  int angle = 5;
+  boolean turn = false;
+  boolean align = false;
+  double turnsetpoint = 0.0;
   private static final String kDefaultAuto = "Cube + Engage";
   private static final String kCustomAuto = "Cube + Mobility";
+  private static final String kCustomAuto1 = "Cone + Mobility";
+
   private String m_autoSelected;
   private final SendableChooser<String> m_chooser = new SendableChooser<>();
 
   private final Timer timer = new Timer();
+  private final Timer intaketimer = new Timer();
+  private final Timer elevatortimer = new Timer();
+
+
 
   final Joystick JOYSTICK = new Joystick(0);
   final Joystick JOYSTICK2 = new Joystick(1);
@@ -77,8 +93,8 @@ public class Robot extends TimedRobot {
 
   final MotorControllerGroup LEFT_DRIVE = new MotorControllerGroup(FRONT_LEFT, BACK_LEFT);
   final MotorControllerGroup RIGHT_DRIVE = new MotorControllerGroup(FRONT_RIGHT, BACK_RIGHT);
-  final Encoder encoderA = new Encoder(0, 1);
-  final Encoder encoderB = new Encoder(2, 3);
+  final Encoder encoderA = new Encoder(1, 2);
+  // final Encoder encoderB = new Encoder(2, 3);
 
   final DifferentialDrive ROBOT_DRIVE = new DifferentialDrive(LEFT_DRIVE, RIGHT_DRIVE);
 
@@ -91,7 +107,7 @@ public class Robot extends TimedRobot {
 
   final MotorControllerGroup m_elevator = new MotorControllerGroup(m_leftElevator, m_rightElevator);
   final AHRS gyro = new AHRS(SPI.Port.kMXP);
-  final DigitalInput toplimitswitch = new DigitalInput(4);
+  final DigitalInput toplimitswitch = new DigitalInput(0);
 
   /**
    * This function is run when the robot is first started up and should be used for any
@@ -99,10 +115,13 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
+    CameraServer.startAutomaticCapture();
     m_rightElevator.setInverted(true);
     RIGHT_DRIVE.setInverted(true);
     m_chooser.setDefaultOption("Cube + Engage", kDefaultAuto);
     m_chooser.addOption("Cube + Mobility", kCustomAuto);
+    m_chooser.addOption("Cone + Mobility", kCustomAuto1);
+
     SmartDashboard.putData("Auto choices", m_chooser);
   }
 
@@ -142,111 +161,205 @@ public class Robot extends TimedRobot {
     timer.reset();
     timer.start();
     encoderA.reset();
-    encoderB.reset();
+    // encoderB.reset();
   }
 
   /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {
     switch (m_autoSelected) {
+      case kCustomAuto1:
+      if (autoCounter==0) {
+        if (timer.get() < 0.2) {
+          ROTATION.set(-0.5);
+        }
+        else {
+          ROTATION.set(0.0);
+          timer.reset();
+          autoCounter++;
+        }
+      }
+      if (autoCounter==1) {
+        if (toplimitswitch.get() == false) {
+          m_elevator.set(-0.8);
+        }
+        else if (toplimitswitch.get() == true) {
+          m_elevator.set(0.0);
+          timer.reset();
+          autoCounter++;
+        }
+        else {
+          autoCounter=8;
+          System.out.println("error");
+        }
+      }
+      if (autoCounter==2) {
+        if (timer.get() < 0.1) {
+          m_elevator.set(0.3);
+        }
+        else {
+          m_elevator.set(0.0);
+          timer.reset();
+          autoCounter++;
+        }
+      }
+      if (autoCounter==3) {
+        if (timer.get()< 1.5) {
+          ROBOT_DRIVE.arcadeDrive(-0.45, 0.0);
+        }
+        else {
+          timer.reset();
+          autoCounter++;
+        }
+      }
+      if (autoCounter==5) {
+        if (timer.get() < 1) {
+          INTAKE.set(0.5);
+        }
+        else {
+          INTAKE.set(0.0);
+          timer.reset();
+          autoCounter++;
+        }
+      }
+      if (autoCounter==4) {
+        if (timer.get() < 0.7) {
+          ROTATION.set(-0.6);
+        }
+        else {
+          ROTATION.set(0.0);
+          timer.reset();
+          autoCounter++;
+        }
+      }
+      if (autoCounter==6) {
+        if (timer.get()<0.5) {
+          ROTATION.set(0.6);
+        }
+        else {
+          timer.reset();
+          autoCounter++;
+        }
+      }
+      if (autoCounter==7) {
+        if (timer.get() < 1.4) {
+          m_elevator.set(0.7);
+        }
+        else {
+          m_elevator.set(0.0);
+          timer.reset();
+          autoCounter++;
+        }
+      }
+      if (autoCounter==8) {
+        if (timer.get() < 3) {
+          ROBOT_DRIVE.arcadeDrive(0.6, 0.0);
+        }
+        else if (encoderA.getDistance() < 2800) {
+          ROBOT_DRIVE.arcadeDrive(0.55, 0.0);
+        }
+        else {
+          ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
+          autoCounter++;
+          encoderA.reset();
+        }
+      }
+      if (autoCounter==9) {
+        if (encoderA.getDistance() < 430) {
+          ROBOT_DRIVE.arcadeDrive(0.0, 0.4);
+        }
+        else {
+          ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
+          autoCounter++;
+        }
+      }
+      break;
       case kCustomAuto:
 
-        if (autoCounter==0) {
-          if (timer.get() < 0.3) {
-            ROTATION.set(-0.5);
-          }
-          else {
-            ROTATION.set(0.0);
-            timer.reset();
-            autoCounter++;
-          }
+      if (autoCounter==0) {
+        if (timer.get() < 0.3) {
+          ROTATION.set(-0.5);
         }
-        if (autoCounter==1) {
-          if (toplimitswitch.get() == false) {
-            m_elevator.set(-0.8);
-          }
-          else if (toplimitswitch.get() == true) {
-            m_elevator.set(0.0);
-            timer.reset();
-            autoCounter++;
-          }
-          else {
-            autoCounter=8;
-            System.out.println("error");
-          }
+        else {
+          ROTATION.set(0.0);
+          timer.reset();
+          autoCounter++;
         }
-        if (autoCounter==2) {
-          if (timer.get() < 0.1) {
-            m_elevator.set(0.3);
-          }
-          else {
-            m_elevator.set(0.0);
-            timer.reset();
-            autoCounter++;
-          }
+      }
+      if (autoCounter==1) {
+        if (toplimitswitch.get() == false) {
+          m_elevator.set(-0.8/2);
         }
-        if (autoCounter==3) {
-          if (timer.get() < 2.7) {
-            ROTATION.set(0.7);
-          }
-          else {
-            ROTATION.set(0.0);
-            timer.reset();
-            autoCounter++;
-          }
+        else if (toplimitswitch.get() == true) {
+          m_elevator.set(0.0);
+          timer.reset();
+          autoCounter++;
         }
-        if (autoCounter==4) {
-          if (timer.get() < 1) {
-            INTAKE.set(-0.6);
-          }
-          else {
-            INTAKE.set(0.0);
-            timer.reset();
-            autoCounter++;
-          }
+        else {
+          autoCounter=8;
+          System.out.println("error");
         }
-        if (autoCounter==5) {
-          if (timer.get() < 0.7) {
-            ROTATION.set(-0.6);
-          }
-          else {
-            ROTATION.set(0.0);
-            timer.reset();
-            autoCounter++;
-          }
+      }
+      if (autoCounter==2) {
+        if (timer.get() < 0.1) {
+          m_elevator.set(0.3/2); //high
         }
-        if (autoCounter==6) {
-          if (timer.get() < 1.4) {
-            m_elevator.set(0.7);
-          }
-          else {
-            m_elevator.set(0.0);
-            timer.reset();
-            autoCounter++;
-          }
+        else {
+          m_elevator.set(0.0);
+          timer.reset();
+          autoCounter++;
         }
-        if (autoCounter==7) {
-          if (timer.get() < 3) {
-            ROBOT_DRIVE.arcadeDrive(0.6, 0.0);
-          }
-          else if (encoderA.getDistance() < 2800) {
-            ROBOT_DRIVE.arcadeDrive(0.55, 0.0);
-          }
-          else {
-            ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
-            autoCounter++;
-            encoderA.reset();
-          }
+      }
+      if (autoCounter==3) {
+        if (timer.get() < 2) {
+          ROTATION.set(0.7);
         }
-        if (autoCounter==8) {
-          if (encoderA.getDistance() < 430) {
-            ROBOT_DRIVE.arcadeDrive(0.0, 0.5);
-          }
-          else {
-            ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
-            autoCounter++;
-          }
+        else {
+          ROTATION.set(0.0);
+          timer.reset();
+          autoCounter++;
         }
+      }
+      if (autoCounter==4) {
+        if (timer.get() < 0.5) {
+          INTAKE.set(-0.9);
+        }
+        else {
+          INTAKE.set(0.0);
+          timer.reset();
+          autoCounter++;
+        }
+      }
+      if (autoCounter==5) {
+        if (timer.get() < 0.7) {
+          ROTATION.set(-0.6);
+        }
+        else {
+          ROTATION.set(0.0);
+          timer.reset();
+          autoCounter++;
+        }
+      }
+      if (autoCounter==6) {
+        if (timer.get() < 3.5) {
+          m_elevator.set(0.3/2);
+        }
+        else {
+          m_elevator.set(0.0);
+          timer.reset();
+          autoCounter++;
+        }
+      } //end of high
+      if (autoCounter==7) {
+        if (timer.get() < 3.5) {
+          ROBOT_DRIVE.arcadeDrive(0.60, 0.0);
+        }
+        else {
+          ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
+          timer.reset();
+          autoCounter++;
+        }
+      }
         break;
       case kDefaultAuto:
 
@@ -262,7 +375,7 @@ public class Robot extends TimedRobot {
         }
         if (autoCounter==1) {
           if (toplimitswitch.get() == false) {
-            m_elevator.set(-0.8);
+            m_elevator.set(-1.0/2);
           }
           else if (toplimitswitch.get() == true) {
             m_elevator.set(0.0);
@@ -276,7 +389,7 @@ public class Robot extends TimedRobot {
         }
         if (autoCounter==2) {
           if (timer.get() < 0.1) {
-            m_elevator.set(0.3);
+            m_elevator.set(0.3/2); //high
           }
           else {
             m_elevator.set(0.0);
@@ -285,8 +398,8 @@ public class Robot extends TimedRobot {
           }
         }
         if (autoCounter==3) {
-          if (timer.get() < 2.7) {
-            ROTATION.set(0.7);
+          if (timer.get() < 0.7) {
+            ROTATION.set(0.9);
           }
           else {
             ROTATION.set(0.0);
@@ -296,7 +409,7 @@ public class Robot extends TimedRobot {
         }
         if (autoCounter==4) {
           if (timer.get() < 0.5) {
-            INTAKE.set(-0.6);
+            INTAKE.set(-0.9);
           }
           else {
             INTAKE.set(0.0);
@@ -315,24 +428,25 @@ public class Robot extends TimedRobot {
           }
         }
         if (autoCounter==6) {
-          if (timer.get() < 1.4) {
-            m_elevator.set(0.7);
+          if (timer.get() < 1.5) {
+            m_elevator.set(0.8/2);
           }
           else {
             m_elevator.set(0.0);
             timer.reset();
             autoCounter++;
           }
-        }
+        } //end of high
         if (autoCounter==7) {
-          if (timer.get() < 3) {
-            ROBOT_DRIVE.arcadeDrive(0.6, 0.0);
-          }
-          else if (encoderA.getDistance() < 1210) { //1240
+          if (timer.get() < 2.0) {
             ROBOT_DRIVE.arcadeDrive(0.65, 0.0);
+          }
+          else if (encoderA.getDistance()>-1240) {
+            ROBOT_DRIVE.arcadeDrive(0.55, 0.0);
           }
           else {
             ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
+            timer.reset();
             autoCounter++;
           }
         }
@@ -341,83 +455,6 @@ public class Robot extends TimedRobot {
         break;
     }
   }
-
-  public int secondsToTicks(double time){
-    return (int)(time*50);
-  }
-  public double pidEngage(AHRS gyro) {
-    sensorposition = -gyro.getPitch();
-    System.out.println(sensorposition);
-    error = sensorposition-setpoint;
-    System.out.println(error);
-    dt = Timer.getFPGATimestamp() - lastTimestamp;
-    if (Math.abs(error) < iLimit) {
-      errorSum += error*dt;
-    }
-
-    errorRate = (error - lasterror) / dt;
-
-    lastTimestamp = Timer.getFPGATimestamp();
-    lasterror = error;
-    return (kp*error + ki*errorSum + kd*errorRate);
-  }
-  public double gyroEngage(AHRS gyro){
-    switch (state){
-            //drive forwards to approach station, exit when tilt is detected
-            case 0:
-                //Once docked, start incrementing this variable
-                if(-gyro.getPitch() > onChargeStationDegree){
-                    debounceCount++;
-                }
-                //If its been docked for 200ms, change states
-                if(debounceCount > secondsToTicks(debounceTime)){
-                    state = 1;
-                    debounceCount = 0;
-                    return robotSpeedSlow;
-                }
-                return robotSpeedFast;
-            //driving up charge station, drive slower, stopping when level
-            case 1:
-                //Once starts to level (levelDegree=6), increase debount count
-                if (-gyro.getPitch() < levelDegree){
-                    debounceCount++; 
-                }
-                //If been level for 200ms, change state
-                if(debounceCount > secondsToTicks(debounceTime)){
-                    state = 3;
-                    debounceCount = 0;
-                    return 0;
-                }
-                return robotSpeedSlow;
-            //on charge station, stop motors and wait for end of auto. Sort of like autocorrection
-            case 2:
-                //If the tilt is less than HALF the level degree, start increasing debounce count
-                if(Math.abs(-gyro.getPitch()) <= levelDegree){
-                    debounceCount++;
-                }
-                //If 200ms passed since half level degree, go to state 4 and robot will stop
-                if(debounceCount>secondsToTicks(debounceTime)){
-                    state = 3;
-                    debounceCount = 0;
-                    return 0;
-                }
-                //If the roll is gerater than the level degree (robot is falling backwards, then VERY slowly go up)
-                if(-gyro.getPitch() >= levelDegree) {
-                    debounceCount=0;
-                    return 0.53;
-                //If instead the roll is less than the negative level degree (robot is falling forwards), then very slowly up BACKWARDS on station
-                } else if(-gyro.getPitch() <= -levelDegree) {
-                    debounceCount=0;
-                    return -0.50;
-                }
-            //Useless should remove but keep just in case
-            case 3:
-                  return 0;
-        }
-        return 0;
-
-  }
-
   /** This function is called once when teleop is enabled. */
   @Override
   public void teleopInit() {
@@ -431,6 +468,20 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {
+    NetworkTable table = NetworkTableInstance.getDefault().getTable("limelight");
+    NetworkTableEntry tx = table.getEntry("tx");
+    NetworkTableEntry ty = table.getEntry("ty");
+    NetworkTableEntry ta = table.getEntry("ta");
+
+    //read values periodically
+    double x = tx.getDouble(0.0);
+    double y = ty.getDouble(0.0);
+    double area = ta.getDouble(0.0);
+
+    //post to smart dashboard periodically
+    SmartDashboard.putNumber("LimelightX", x);
+    SmartDashboard.putNumber("LimelightY", y);
+    SmartDashboard.putNumber("LimelightArea", area);
     SmartDashboard.putNumber("Roll", gyro.getRoll());
     SmartDashboard.putNumber("Pitch", gyro.getPitch());
     SmartDashboard.putNumber("Yaw", gyro.getYaw());
@@ -439,27 +490,25 @@ public class Robot extends TimedRobot {
     SmartDashboard.putNumber("Elevator Encoder", m_elevatorEncoder.getPosition());
     SmartDashboard.putBoolean("Limit Switch", toplimitswitch.get());
     SmartDashboard.putNumber("EncoderA", encoderA.getDistance());
-    if (JOYSTICK2.getRawButtonPressed(6)) {
-      INTAKE.set(0.4);
-    } 
-    if (JOYSTICK2.getRawButtonReleased(6)) {
-      INTAKE.set(0.2);
+    // SmartDashboard.putNumber("EncoderB", encoderB.getDistance());
+
+
+    // elevator below
+
+    toggle = toplimitswitch.get(); // current position of limit switch
+    
+    if (toplimitswitch.get()) { //resets encoder value and accounts for drift
+      m_elevatorEncoder.setPosition(-219);
     }
-    if (JOYSTICK2.getRawButtonPressed(8)) {
-      INTAKE.set(-0.5);
-    }
-    if (JOYSTICK2.getRawButtonReleased(8)) {
-      INTAKE.set(-0.2);
+    if (JOYSTICK2.getRawButton(1)) { //mid button -- brings elevator to the mid level
+      mid = true;
+      elevatortimer.reset();
+      elevatortimer.start();
     }
 
-    // toggle = toplimitswitch.get();
-
-    // if (JOYSTICK2.getRawButton(1)) {
-    //   m_elevatorEncoder.setPosition(0.0);
-    //   mid = true;
-    // }
-
-    // if (mid) {
+    // in a function
+    if (mid) {elevator();}
+    // if (mid) { // if mid is pressed set to mid 
     //   sensorposition = -m_elevatorEncoder.getPosition();
     //   error = setpoint-sensorposition;
     //   dt = Timer.getFPGATimestamp() - lastTimestamp;
@@ -472,177 +521,127 @@ public class Robot extends TimedRobot {
     //   lastTimestamp = Timer.getFPGATimestamp();
     //   lasterror = error;
       
-    //   m_elevator.set(-kp*error);
-    //   if (error < 5) {
+    //   m_elevator.set(-kp*error/2);
+    //   if (error < 5) { //close to mid done process
     //     mid = false;
     //     m_elevator.set(0.0);
     //   }
     // }
-    // SmartDashboard.putNumber("error", error);
-    // if (JOYSTICK2.getRawButtonPressed(4) && up == false) {
-    //   if (toggle) {
-    //     timer.reset();
-    //     timer.start();
-    //     if (timer.get() < 0.3) {
-    //       m_elevator.set(0.2);
-    //     }
-    //     System.out.println("Yes");
-    //     up = false;
-    //   }
-    //   else {
-    //     m_elevator.set(-0.8);
-    //     System.out.println("no");
-    //     up = true;
-    //   }
-    // }
-    // if (up) {
-    //   if (toggle) {
-    //     m_elevator.set(0.0);
-    //     timer.reset();
-    //     timer.start();
-    //     if (timer.get() < 0.3) {
-    //       m_elevator.set(0.2);
-    //     }
-    //     up = false;
-    //   }
-    // }
-
-    // if (JOYSTICK2.getRawButtonReleased(4)) {
-    //   m_elevator.set(0.0);
-    //   up = false;
-    // }
-
-    // if (JOYSTICK2.getRawButtonPressed(2)) {
-    //   System.out.println("goofy");
-    //   m_elevator.set(0.8);
-    // }
-    // if (JOYSTICK2.getRawButtonReleased(2)) {
-    //   m_elevator.set(0.0);
-    // }
-
-
-
-
-
-
-
-    toggle = toplimitswitch.get();
-    
-    if (toplimitswitch.get()) {
-      m_elevatorEncoder.setPosition(-219);
-    }
-    if (JOYSTICK2.getRawButton(1)) {
-      m_elevatorEncoder.setPosition(0.0);
-      mid = true;
-    }
-
-    if (mid) {
-      sensorposition = -m_elevatorEncoder.getPosition();
-      error = setpoint-sensorposition;
-      dt = Timer.getFPGATimestamp() - lastTimestamp;
-      if (Math.abs(error) < iLimit) {
-        errorSum += error*dt;
-      }
-  
-      errorRate = (error - lasterror) / dt;
-  
-      lastTimestamp = Timer.getFPGATimestamp();
-      lasterror = error;
-      
-      // m_elevator.set(-kp*error);
-      m_rightElevator.set(-kp*error);
-      m_leftElevator.set(-kp*error*0.333333333333333333333333333);
-      if (error < 5) {
-        mid = false;
-        m_elevator.set(0.0);
-      }
-    }
-    SmartDashboard.putNumber("error", error);
-    if (JOYSTICK2.getRawButtonPressed(4) && up == false) {
+    SmartDashboard.putNumber("error", error); // if limit switch == true and trying to go up, it will go down
+    if (JOYSTICK2.getRawButtonPressed(4) && up == false) { // elevator down
       if (toggle) {
         timer.reset();
         timer.start();
         if (timer.get() < 0.3) {
-          // m_elevator.set(0.2);
-          m_rightElevator.set(0.3);
-          m_leftElevator.set(0.3*0.3333333333333333333333333333333333);
+          m_elevator.set(0.2/2);
         }
         System.out.println("Yes");
         up = false;
       }
-      else {
-        // m_elevator.set(-0.8);
-        m_rightElevator.set(-0.9);
-        m_leftElevator.set(-0.9*0.3333333333333333333333333333333333333333);
+      else { // elevator up
+        m_elevator.set(-1.2/2);
         System.out.println("no");
         up = true;
       }
     }
-    if (up) {
+    if (up) { //if up== true limit switch true, turn off elevator and let slide little
       if (toggle) {
         m_elevator.set(0.0);
         timer.reset();
         timer.start();
-        if (timer.get() < 0.3) {
-          // m_elevator.set(0.2);
-          m_rightElevator.set(0.3);
-          m_leftElevator.set(0.3*0.3333333333333333333333333333333333);
+        if (timer.get() < 0.3) { // go down for a little
+          m_elevator.set(0.2/2);
         }
         up = false;
       }
     }
 
-    if (JOYSTICK2.getRawButtonReleased(4)) {
+    Intake();
+
+    if (JOYSTICK2.getRawButtonReleased(4)) { // release up then turn off elevator
       m_elevator.set(0.0);
       up = false;
     }
 
-    if (JOYSTICK2.getRawButtonPressed(2)) {
+    if (JOYSTICK2.getRawButtonPressed(2)) { // elevator goes down
       System.out.println("goofy");
-      // m_elevator.set(0.8);
-      m_rightElevator.set(0.7);
-      m_leftElevator.set(0.7*0.3333333333333333333333333333333333333);
+      m_elevator.set(0.6/2);
 
     }
-    if (JOYSTICK2.getRawButtonReleased(2)) {
+    if (JOYSTICK2.getRawButtonReleased(2)) { //elevator stops
       m_elevator.set(0.0);
     }
 
-    if (JOYSTICK2.getRawButtonPressed(7)) {
-      ROTATION.set(-0.6);
+    if (JOYSTICK2.getRawButtonPressed(7)) { // intake rotation down
+      ROTATION.set(-0.55);
     }
-    if (JOYSTICK2.getRawButtonReleased(7)) {
+    if (JOYSTICK2.getRawButtonReleased(7)) { // intake release stall to assist in decending
       ROTATION.set(0.15);
     }
-    if (JOYSTICK2.getRawButtonPressed(5)) {
-      ROTATION.set(0.85);
+    if (JOYSTICK2.getRawButtonPressed(5)) { // intake rotation up
+      ROTATION.set(0.95);
     }
-    if (JOYSTICK2.getRawButtonReleased(5)) {
+    if (JOYSTICK2.getRawButtonReleased(5)) { // intake release stall to assist in decending 
       ROTATION.set(0.15);
     }
-    if (JOYSTICK2.getRawButton(3)) {
+    if (JOYSTICK2.getRawButton(3)) { // intake hard turn off -- kill
       INTAKE.set(0.0);
     }
     
-    if (JOYSTICK.getRawButton(1)) {
+    if (JOYSTICK.getRawButton(4)) {
+      align = true;
+    }
+
+    if (JOYSTICK.getRawButton(3)) {
+      turn = true;
+      turnsetpoint = gyro.getYaw() + 90;
+    }
+
+    if (align) {
+      error = x;
+
+      if (error > 0) {
+        ROBOT_DRIVE.arcadeDrive(0.45, 0.0);
+      }
+      else if (error < 0) {
+        ROBOT_DRIVE.arcadeDrive(-0.45, 0.0);
+      }
+
+      if (-4 < error && error < 0) {
+        align = false;
+        ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
+        // turn = true;
+      }
+
+    }
+
+    if (turn) {
+      error = turnsetpoint-gyro.getYaw();
+      ROBOT_DRIVE.arcadeDrive(0.0, -0.007*error);
+      SmartDashboard.putNumber("turn value", -0.007*error);
+      if (error < 5) {
+        turn = false;
+        ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
+      }
+    }
+
+    if (JOYSTICK.getRawButton(6)) {
+      turn = false;
+      align = false;
+    }
+
+    if (JOYSTICK.getRawButton(1)) { //slow drive train
       slowdrive = 0.50;
       slowturn = 0.80;
     }
-    if (JOYSTICK.getRawButton(2)) {
+    if (JOYSTICK.getRawButton(2)) { // go back to normal
       slowdrive = 1.0;
       slowturn = 1.0;
     }
-    ROBOT_DRIVE.arcadeDrive(JOYSTICK.getRawAxis(1)*slowdrive, -JOYSTICK.getRawAxis(4)*0.7*slowturn);
-    // if (JOYSTICK.getRawButton(1)) {
-    //   gyroEngage(gyro);
-    // //   // if (gyro.getPitch() < -4) {
-    // //   //   ROBOT_DRIVE.arcadeDrive(-0.4, 0.0);
-    // //   // }
-    // //   ROBOT_DRIVE.arcadeDrive(pidEngage(gyro), 0.0);
-    // }
-    System.out.println(gyro.getPitch()-lastpitch);
-    lastpitch = gyro.getPitch();
-    
+
+    if (turn == false && align == false) {
+      ROBOT_DRIVE.arcadeDrive(JOYSTICK.getRawAxis(1)*slowdrive, -JOYSTICK.getRawAxis(4)*0.7*slowturn); // set everything to drive train
+    }
   }
 
   /** This function is called once when the robot is disabled. */
@@ -664,86 +663,12 @@ public class Robot extends TimedRobot {
   /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {
-    // ROBOT_DRIVE.arcadeDrive(gyroEngage(gyro), 0.0);
-    toggle = toplimitswitch.get();
-
-    if (JOYSTICK2.getRawButton(1)) {
-      m_elevatorEncoder.setPosition(0.0);
-      mid = true;
+    if (gyro.getPitch()>5) {
+      ROBOT_DRIVE.arcadeDrive(0.45, 0.0);
     }
-
-    if (mid) {
-      sensorposition = -m_elevatorEncoder.getPosition();
-      error = setpoint-sensorposition;
-      dt = Timer.getFPGATimestamp() - lastTimestamp;
-      if (Math.abs(error) < iLimit) {
-        errorSum += error*dt;
-      }
-  
-      errorRate = (error - lasterror) / dt;
-  
-      lastTimestamp = Timer.getFPGATimestamp();
-      lasterror = error;
-      
-      // m_elevator.set(-kp*error);
-      m_rightElevator.set(-kp*error);
-      m_leftElevator.set(-kp*error*0.333333333333333333333333333);
-      if (error < 5) {
-        mid = false;
-        m_elevator.set(0.0);
-      }
+    else {
+      ROBOT_DRIVE.arcadeDrive(0.0, 0.0);
     }
-    SmartDashboard.putNumber("error", error);
-    if (JOYSTICK2.getRawButtonPressed(4) && up == false) {
-      if (toggle) {
-        timer.reset();
-        timer.start();
-        if (timer.get() < 0.3) {
-          // m_elevator.set(0.2);
-          m_rightElevator.set(0.2);
-          m_leftElevator.set(0.2*0.3333333333333333333333333333333333);
-        }
-        System.out.println("Yes");
-        up = false;
-      }
-      else {
-        // m_elevator.set(-0.8);
-        m_rightElevator.set(-0.8);
-        m_leftElevator.set(-0.8*0.3333333333333333333333333333333333333333);
-        System.out.println("no");
-        up = true;
-      }
-    }
-    if (up) {
-      if (toggle) {
-        m_elevator.set(0.0);
-        timer.reset();
-        timer.start();
-        if (timer.get() < 0.3) {
-          // m_elevator.set(0.2);
-          m_rightElevator.set(0.2);
-          m_leftElevator.set(0.2*0.3333333333333333333333333333333333);
-        }
-        up = false;
-      }
-    }
-
-    if (JOYSTICK2.getRawButtonReleased(4)) {
-      m_elevator.set(0.0);
-      up = false;
-    }
-
-    if (JOYSTICK2.getRawButtonPressed(2)) {
-      System.out.println("goofy");
-      // m_elevator.set(0.8);
-      m_rightElevator.set(0.8);
-      m_leftElevator.set(0.8*0.3333333333333333333333333333333333333);
-
-    }
-    if (JOYSTICK2.getRawButtonReleased(2)) {
-      m_elevator.set(0.0);
-    }
-
   }
 
   /** This function is called once when the robot is first started up. */
@@ -753,4 +678,62 @@ public class Robot extends TimedRobot {
   /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
+
+  public void Intake() {
+    if (JOYSTICK2.getRawButtonPressed(6)) {cubein();} 
+
+    if (JOYSTICK2.getRawButtonPressed(8)) {cubeout();}
+
+    if (JOYSTICK2.getRawButtonReleased(6)) {cubestall();}
+
+    if (JOYSTICK2.getRawButtonReleased(8)) {conestall();}
+  }
+
+  public void dropintake() {
+    if (intaketimer.get() < 0.3) {
+      ROTATION.set(-0.5);
+    }
+    else {
+      ROTATION.set(0.0);
+    }
+  }
+
+  public void cubestall() {
+    INTAKE.set(0.2);
+  }
+
+  public void conestall() {
+    INTAKE.set(-0.2);
+  }
+  public void elevator() {
+    
+    m_elevator.set(0.3/elevatortimer.get());
+
+    SmartDashboard.putNumber("speed of elevator", kp*error/2);
+    if (toplimitswitch.get()) { //close to mid done process
+      mid = false;
+      m_elevator.set(0.0);
+    }
+  }
+
+  public void cubeout() {
+    INTAKE.set(-0.5);
+  }
+
+  public void cubein() {
+    INTAKE.set(0.4);
+  }
+
+  public void intakeoff() {
+    INTAKE.set(0.0);
+  }
+
+  // group all cube stuff into methods -- split into intake/outake
+  // set global with meaning variables
+  // split tasks (move cube to mid --> dropintake - pull cube - stop move - lift to mid - dro cube - drop mid - drop intake )
+  // resetelevator()
+  // reset intake()
+  // intake cube (speed, button)
+  // outake cube (speed, button)
+  // lift (height: float)
 }
