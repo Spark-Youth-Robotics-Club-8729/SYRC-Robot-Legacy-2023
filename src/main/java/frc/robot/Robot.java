@@ -35,7 +35,7 @@ import edu.wpi.first.networktables.NetworkTableInstance;
  * project.
  */
 public class Robot extends TimedRobot {
-  int state=0;
+  int state=0; //TEST
   int debounceCount=0;
   double onChargeStationDegree = 13.0;
   double debounceTime = 0.2;
