@@ -37,38 +37,24 @@
         <module name="EmptyStatement">
             <property name="severity" value="warning"/>
         </module>
-        <module name="EqualsAvoidNull">
-            <property name="severity" value="warning"/>
-        </module>
+        <module name="EqualsAvoidNull" />
         <module name="FallThrough">
             <property name="severity" value="warning"/>
         </module>
-        <module name="SimplifyBooleanExpression">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="SimplifyBooleanReturn">
-            <property name="severity" value="warning"/>
-        </module>
+        <module name="SimplifyBooleanExpression" />
+        <module name="SimplifyBooleanReturn" />
         <module name="MagicNumber">
             <property name="severity" value="warning"/>
         </module>
-        <module name="MissingCtor">
-            <property name="severity" value="warning"/>
-        </module>
+        <module name="MissingCtor" />
         <module name="PackageDeclaration">
             <property name="severity" value="warning"/>
         </module>
-        <module name="StringLiteralEquality">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="RedundantImport">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="UnusedImports">
-            <property name="severity" value="warning"/>
-        </module>
+        <module name="StringLiteralEquality" />
+        <module name="RedundantImport" />
+        <module name="UnusedImports" />
         <module name="Indentation">
-            <property name="severity" value="warning"/>
+            <property name="basicOffset" value="2"/>
         </module>
         <module name="NoCodeInFile">
             <property name="severity" value="warning"/>
@@ -85,9 +71,7 @@
         <module name="MemberName">
             <property name="severity" value="warning"/>
         </module>
-        <module name="MethodName">
-            <property name="severity" value="warning"/>
-        </module>
+        <module name="MethodName" />
         <module name="MethodTypeParameterName">
             <property name="severity" value="warning"/>
         </module>
@@ -100,42 +84,20 @@
         <module name="StaticVariableName">
             <property name="severity" value="warning"/>
         </module>
-        <module name="TypeName">
+        <module name="TypeName" />
+        <module name="EmptyLineSeparator" >
             <property name="severity" value="warning"/>
         </module>
-        <module name="EmptyLineSeparator">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="GenericWhitespace">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="MethodParamPad">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="NoWhitespaceAfter">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="NoWhitespaceBefore">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="OperatorWrap">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="ParenPad">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="SingleSpaceSeparator">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="TypecastParenPad">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="WhitespaceAfter">
-            <property name="severity" value="warning"/>
-        </module>
-        <module name="WhitespaceAround">
-            <property name="severity" value="warning"/>
-        </module>
+        <module name="GenericWhitespace" />
+        <module name="MethodParamPad" />
+        <module name="NoWhitespaceAfter" />
+        <module name="NoWhitespaceBefore" />
+        <module name="OperatorWrap" />
+        <module name="ParenPad" />
+        <module name="SingleSpaceSeparator" />
+        <module name="TypecastParenPad" />
+        <module name="WhitespaceAfter" />
+        <module name="WhitespaceAround" />
     </module>
 </module>
 
